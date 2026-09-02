@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+:root {
+  --color-navy: #0a0f1e;
+  --color-navy-light: #141b30;
+  --color-navy-mid: #1c2540;
+  --color-gold: #c6a15b;
+  --color-gold-light: #e4cf9c;
+  /* Deepened from the original #9c7d3f so gold-dark text clears WCAG AA
+     (4.5:1) on white/cream card backgrounds — it's only ever used as
+     text-on-light in this codebase, gold-light covers text-on-navy. */
+  --color-gold-dark: #826026;
+  --color-teal: #0f766e;
+  --color-amber: #f59e0b;
+  --color-orange: #f97316;
+  --color-violet: #7c3aed;
+  --color-crimson: #e11d48;
+  --color-cream: #faf7f1;
+  --color-cream-alt: #f1ead9;
+  --color-bg: #faf7f1;
+  --color-ink: #14110d;
+  --color-muted: #5c5648;
+  /* Deepened from the original #8a8474 (3.7:1) to clear WCAG AA for the
+     small/body-sized subheadings it's used on across every section. */
+  --color-muted-light: #6d6355;
+
+  --font-display: var(--font-playfair);
+  --font-heading: var(--font-poppins);
+  --font-body: var(--font-roboto);
+  --font-brand: var(--font-vision);
+}
+
+@theme inline {
+  --color-navy: var(--color-navy);
+  --color-navy-light: var(--color-navy-light);
+  --color-navy-mid: var(--color-navy-mid);
+  --color-gold: var(--color-gold);
+  --color-gold-light: var(--color-gold-light);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-teal: var(--color-teal);
+  --color-amber: var(--color-amber);
+  --color-orange: var(--color-orange);
+  --color-violet: var(--color-violet);
+  --color-crimson: var(--color-crimson);
+  --color-cream: var(--color-cream);
+  --color-cream-alt: var(--color-cream-alt);
+  --color-bg: var(--color-bg);
+  --color-ink: var(--color-ink);
+  --color-muted: var(--color-muted);
+  --color-muted-light: var(--color-muted-light);
+
+  --font-display: var(--font-display);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
+  --font-brand: var(--font-brand);
+}
+
+/*
+  Type scale (modular, ~1.25 ratio, 16px body base) — the values already in
+  use throughout the component classes (h1 text-6xl/lg:text-7xl, h2 text-4xl/
+  md:text-[2.75rem], h3 text-xl/text-2xl, h4 text-[15px], body text-sm/base,
+  caption text-xs) implement this scale; documented here as the source of
+  truth rather than re-tokenized, to avoid touching every heading class for
+  a purely organizational change.
+
+  caption 12px -> body 16px -> h6/lead 20px -> h5 25px -> h4 25-31px ->
+  h3 31-39px -> h2 39-44px -> h1 44-72px (display, intentionally exceeds the
+  strict ratio at the top end for hero impact).
+*/
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+}
+
+/* ---- Premium design primitives ---- */
+
+.eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-gold-dark);
+}
+
+.eyebrow-on-dark {
+  color: var(--color-gold-light);
+}
+
+.divider-gold {
+  height: 1px;
+  width: 3rem;
+  background: linear-gradient(90deg, var(--color-gold) 0%, transparent 100%);
+}
+
+.divider-gold-center {
+  height: 1px;
+  width: 3.5rem;
+  margin-inline: auto;
+  background: linear-gradient(90deg, transparent 0%, var(--color-gold) 50%, transparent 100%);
+}
+
+.shadow-premium {
+  box-shadow:
+    0 2px 4px rgba(10, 15, 30, 0.03),
+    0 24px 48px -20px rgba(10, 15, 30, 0.22);
+}
+
+.shadow-premium-lg {
+  box-shadow:
+    0 4px 8px rgba(10, 15, 30, 0.04),
+    0 40px 80px -24px rgba(10, 15, 30, 0.35);
+}
+
+.hairline {
+  border: 1px solid rgba(198, 161, 91, 0.22);
+}
+
+.hairline-light {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.btn-gold,
+.btn-outline-gold,
+.btn-outline-navy {
+  outline-offset: 2px;
+}
+
+.btn-gold:focus-visible,
+.btn-outline-gold:focus-visible,
+.btn-outline-navy:focus-visible {
+  outline: 2px solid var(--color-gold-dark);
+}
+
+.btn-gold {
+  font-family: var(--font-heading);
+  background: linear-gradient(135deg, #d8b877 0%, var(--color-gold) 45%, var(--color-gold-dark) 100%);
+  color: var(--color-navy);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 12px 30px -10px rgba(198, 161, 91, 0.55);
+}
+
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 36px -10px rgba(198, 161, 91, 0.65);
+}
+
+.btn-gold:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 8px 18px -10px rgba(198, 161, 91, 0.55);
+}
+
+.btn-outline-gold {
+  font-family: var(--font-heading);
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold-light);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-outline-gold:hover {
+  background: var(--color-gold);
+  color: var(--color-navy);
+}
+
+.btn-outline-gold:active {
+  transform: scale(0.98);
+}
+
+.btn-outline-navy {
+  font-family: var(--font-heading);
+  border: 1px solid rgba(10, 15, 30, 0.3);
+  color: var(--color-navy);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-outline-navy:hover {
+  background: var(--color-navy);
+  border-color: var(--color-navy);
+  color: var(--color-gold-light);
+}
+
+.btn-outline-navy:active {
+  transform: scale(0.98);
+}
+
+.btn-gold:disabled,
+.btn-outline-gold:disabled,
+.btn-outline-navy:disabled {
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Badge — small status/rating chip */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  border-radius: 9999px;
+  padding: 0.3rem 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.badge-gold {
+  background: rgba(130, 96, 38, 0.1);
+  color: var(--color-gold-dark);
+}
+
+.badge-gold-on-dark {
+  background: rgba(228, 207, 156, 0.12);
+  color: var(--color-gold-light);
+}
+
+/* Minimum 44x44px touch target: expands the invisible hit area around any
+   interactive element via a centered pseudo-element, without altering the
+   element's own visual size (critical for small indicators like the
+   testimonial pagination dots). max(100%, 44px) means it's a no-op once an
+   element is already large enough. */
+.tap-target {
+  position: relative;
+}
+
+.tap-target::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100%, 2.75rem);
+  height: max(100%, 2.75rem);
+  transform: translate(-50%, -50%);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
