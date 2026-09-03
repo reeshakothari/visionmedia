@@ -4,7 +4,9 @@ import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import JourneySteps from "@/components/JourneySteps";
 import Gallery from "@/components/Gallery";
 import ContactSection from "@/components/ContactSection";
-import { weddingPage } from "@/lib/content";
+import { getContent, getGalleryImages, type WeddingContent } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Luxury Wedding Planning & Design Services | Vision Media & Entertainment",
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
     "Exquisite wedding planning and design services creating magical, unforgettable celebrations. From intimate ceremonies to grand destination weddings.",
 };
 
-export default function WeddingPage() {
+export default async function WeddingPage() {
+  const [weddingPage, galleryItems] = await Promise.all([
+    getContent<WeddingContent>("wedding"),
+    getGalleryImages("wedding", { onlyPublished: true }),
+  ]);
+
   return (
     <>
       <PageHero image={weddingPage.heroImage} title={weddingPage.heroTitle} subtitle={weddingPage.heroSubtitle} />
@@ -22,8 +29,10 @@ export default function WeddingPage() {
         services={weddingPage.services}
       />
       <JourneySteps heading={weddingPage.journeyHeading} subheading={weddingPage.journeySubheading} steps={weddingPage.journey} />
-      <Gallery heading={weddingPage.galleryHeading} subheading={weddingPage.gallerySubheading} items={weddingPage.gallery} />
+      <Gallery heading={weddingPage.galleryHeading} subheading={weddingPage.gallerySubheading} items={galleryItems} />
       <ContactSection
+        contentPath="contact"
+        formType="wedding"
         heading={weddingPage.contact.heading}
         subheading={weddingPage.contact.subheading}
         phone={weddingPage.contact.phone}

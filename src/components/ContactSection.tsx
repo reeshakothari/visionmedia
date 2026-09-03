@@ -2,7 +2,25 @@
 
 import { useState } from "react";
 import Reveal from "@/components/Reveal";
-import { formAction } from "@/lib/content";
+import { Field } from "@/components/editable/Field";
+import { submitEnquiryAction } from "@/lib/actions";
+import { PAGE_LABELS, type PageKey } from "@/lib/pages";
+
+function toWhatsAppNumber(phone: string) {
+  return phone.replace(/\D/g, "");
+}
+
+function buildWhatsAppMessage(fields: ContactField[], formData: FormData, pageLabel: string) {
+  const lines = [`New enquiry from the website — ${pageLabel}`, ""];
+  for (const field of fields) {
+    const raw = formData.get(field.name);
+    if (!raw || !String(raw).trim()) continue;
+    const value = field.kind === "select" ? (field.options.find((o) => o.value === raw)?.label ?? raw) : raw;
+    const label = field.placeholder.replace(/^(Your |Select )/, "");
+    lines.push(`${label}: ${value}`);
+  }
+  return lines.join("\n");
+}
 
 export type ContactField =
   | { kind: "text"; name: string; placeholder: string }
@@ -12,8 +30,16 @@ export type ContactField =
 
 export default function ContactSection({
   id = "contact",
+  contentPath,
+  formType,
   heading,
   subheading,
+  headingPath,
+  subheadingPath,
+  phonePath,
+  emailPath,
+  addressPath,
+  hoursPath,
   infoHeading = "Get In Touch",
   phone,
   email,
@@ -23,8 +49,16 @@ export default function ContactSection({
   submitLabel = "Send Message",
 }: {
   id?: string;
+  contentPath: string;
+  formType: string;
   heading: string;
   subheading: string;
+  headingPath?: string;
+  subheadingPath?: string;
+  phonePath?: string;
+  emailPath?: string;
+  addressPath?: string;
+  hoursPath?: string;
   infoHeading?: string;
   phone: string;
   email: string;
@@ -34,6 +68,8 @@ export default function ContactSection({
   submitLabel?: string;
 }) {
   const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<"idle" | "success" | "error">("idle");
+  const prefixed = (override: string | undefined, field: string) => override ?? `${contentPath}.${field}`;
 
   return (
     <section id={id} className="bg-white px-4 py-20 sm:px-6 md:py-28">
@@ -41,8 +77,12 @@ export default function ContactSection({
         <Reveal>
           <div className="mx-auto mb-12 max-w-2xl text-center md:mb-16">
             <div className="divider-gold-center mb-5" />
-            <h2 className="font-display text-3xl text-navy sm:text-4xl md:text-[2.75rem]">{heading}</h2>
-            <p className="mt-4 text-sm leading-relaxed text-muted-light sm:text-base">{subheading}</p>
+            <h2 className="font-display text-3xl text-navy sm:text-4xl md:text-[2.75rem]">
+              <Field path={prefixed(headingPath, "heading")} value={heading} />
+            </h2>
+            <p className="mt-4 text-sm leading-relaxed text-muted-light sm:text-base">
+              <Field path={prefixed(subheadingPath, "subheading")} value={subheading} />
+            </p>
           </div>
         </Reveal>
 
@@ -55,19 +95,21 @@ export default function ContactSection({
                 <div>
                   <p className="font-heading text-[11px] font-semibold tracking-[0.15em] text-gold-light uppercase">Phone</p>
                   <a href={`tel:${phone.replace(/\s/g, "")}`} className="mt-1 block text-white/80 hover:text-gold-light">
-                    {phone}
+                    <Field path={prefixed(phonePath, "phone")} value={phone} />
                   </a>
                 </div>
                 <div>
                   <p className="font-heading text-[11px] font-semibold tracking-[0.15em] text-gold-light uppercase">Email</p>
                   <a href={`mailto:${email}`} className="mt-1 block break-all text-white/80 hover:text-gold-light">
-                    {email}
+                    <Field path={prefixed(emailPath, "email")} value={email} />
                   </a>
                 </div>
                 {address && (
                   <div>
                     <p className="font-heading text-[11px] font-semibold tracking-[0.15em] text-gold-light uppercase">Address</p>
-                    <p className="mt-1 text-white/80">{address}</p>
+                    <p className="mt-1 text-white/80">
+                      <Field path={prefixed(addressPath, "address")} value={address} />
+                    </p>
                   </div>
                 )}
                 {hours && (
@@ -75,7 +117,9 @@ export default function ContactSection({
                     <p className="font-heading text-[11px] font-semibold tracking-[0.15em] text-gold-light uppercase">
                       Business Hours
                     </p>
-                    <p className="mt-1 text-white/80">{hours}</p>
+                    <p className="mt-1 text-white/80">
+                      <Field path={prefixed(hoursPath, "hours")} value={hours} />
+                    </p>
                   </div>
                 )}
               </div>
@@ -84,10 +128,27 @@ export default function ContactSection({
 
           <Reveal direction="right">
             <form
-              action={formAction}
-              method="POST"
               className="hairline shadow-premium space-y-4 rounded-2xl p-8 sm:p-10"
-              onSubmit={() => setSubmitting(true)}
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.currentTarget;
+                setSubmitting(true);
+                setResult("idle");
+                try {
+                  const formData = new FormData(form);
+                  await submitEnquiryAction(formType, formData);
+                  setResult("success");
+                  form.reset();
+
+                  const whatsappNumber = toWhatsAppNumber(phone);
+                  const message = buildWhatsAppMessage(fields, formData, PAGE_LABELS[formType as PageKey] ?? formType);
+                  window.location.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+                } catch {
+                  setResult("error");
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
             >
               {fields.map((field) => {
                 if (field.kind === "select") {
@@ -141,6 +202,17 @@ export default function ContactSection({
               >
                 {submitting ? "Sending..." : submitLabel}
               </button>
+
+              {result === "success" && (
+                <p className="text-center text-sm font-medium text-emerald-600">
+                  Thank you — taking you to WhatsApp to continue the conversation…
+                </p>
+              )}
+              {result === "error" && (
+                <p className="text-center text-sm font-medium text-red-600">
+                  Something went wrong. Please try again or call us directly.
+                </p>
+              )}
             </form>
           </Reveal>
         </div>

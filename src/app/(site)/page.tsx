@@ -5,24 +5,38 @@ import Gallery from "@/components/Gallery";
 import Testimonials from "@/components/Testimonials";
 import BlogPreview from "@/components/BlogPreview";
 import ContactSection from "@/components/ContactSection";
-import { gallerySection, homeContact } from "@/lib/content";
+import { getContent, getGalleryImages, getTestimonials, getBlogPosts, type HomeContent } from "@/lib/cms";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const [content, galleryItems, reviews, posts] = await Promise.all([
+    getContent<HomeContent>("home"),
+    getGalleryImages("home", { onlyPublished: true }),
+    getTestimonials({ onlyPublished: true }),
+    getBlogPosts({ onlyPublished: true, limit: 3 }),
+  ]);
+  const { hero, servicesSection, serviceCards, aboutSection, gallerySection, reviewsSection, blogPreviewSection, homeContact } = content;
+
   return (
     <>
-      <Hero />
-      <ServiceCards />
-      <AboutSection />
+      <Hero hero={hero} />
+      <ServiceCards servicesSection={servicesSection} serviceCards={serviceCards} />
+      <AboutSection aboutSection={aboutSection} />
       <Gallery
         id="gallery"
         heading={gallerySection.heading}
         subheading={gallerySection.subheading}
-        items={gallerySection.items}
+        headingPath="gallerySection.heading"
+        subheadingPath="gallerySection.subheading"
+        items={galleryItems}
         cta={{ text: gallerySection.ctaText, label: gallerySection.ctaLabel, href: "#contact" }}
       />
-      <Testimonials />
-      <BlogPreview />
+      <Testimonials reviewsSection={reviewsSection} reviews={reviews} />
+      <BlogPreview blogPreviewSection={blogPreviewSection} posts={posts} />
       <ContactSection
+        contentPath="homeContact"
+        formType="home"
         heading={homeContact.heading}
         subheading={homeContact.subheading}
         infoHeading={homeContact.infoHeading}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { copyright, footerByPath, homeContact, siteInfo, socialLinks } from "@/lib/content";
+import type { GlobalContent, HomeContent } from "@/lib/cms";
 
 function FacebookIcon() {
   return (
@@ -34,7 +34,19 @@ function CallIcon() {
   );
 }
 
-export default function Footer() {
+export default function Footer({
+  siteInfo,
+  socialLinks,
+  copyright,
+  contact,
+  footerByPath,
+}: {
+  siteInfo: GlobalContent["siteInfo"];
+  socialLinks: GlobalContent["socialLinks"];
+  copyright: GlobalContent["copyright"];
+  contact: HomeContent["homeContact"];
+  footerByPath: Record<string, { text: string; links: { label: string; href: string }[] }>;
+}) {
   const pathname = usePathname();
   const { text, links } = footerByPath[pathname] ?? footerByPath["/"];
 
@@ -66,12 +78,12 @@ export default function Footer() {
             <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">Contact</h4>
             <ul className="mt-4 space-y-2 text-sm text-white/60">
               <li>
-                <a href={socialLinks.call} className="hover:text-gold-light">{homeContact.phone}</a>
+                <a href={socialLinks.call} className="hover:text-gold-light">{contact.phone}</a>
               </li>
               <li>
-                <a href={`mailto:${homeContact.email}`} className="hover:text-gold-light break-all">{homeContact.email}</a>
+                <a href={`mailto:${contact.email}`} className="hover:text-gold-light break-all">{contact.email}</a>
               </li>
-              <li>{homeContact.address}</li>
+              <li>{contact.address}</li>
             </ul>
           </div>
 

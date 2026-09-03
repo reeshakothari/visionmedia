@@ -3,8 +3,6 @@ import { Playfair_Display, Poppins, Roboto } from "next/font/google";
 import localFont from "next/font/local";
 import { MotionConfig } from "framer-motion";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
@@ -45,11 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${playfair.variable} ${poppins.variable} ${roboto.variable} ${visionFont.variable}`}
     >
       <body className="flex min-h-screen flex-col antialiased overflow-x-hidden">
-        <MotionConfig reducedMotion="user">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </MotionConfig>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
       </body>
     </html>
   );

@@ -4,7 +4,9 @@ import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import WhySection from "@/components/WhySection";
 import Gallery from "@/components/Gallery";
 import ContactSection from "@/components/ContactSection";
-import { venuesPage } from "@/lib/content";
+import { getContent, getGalleryImages, type VenuesContent } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Wedding Venues & Exclusive Locations | Vision Media & Entertainment",
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
     "Discover exclusive wedding venues and premium locations for your special day. From garden venues to historic mansions, we provide the perfect setting for your celebration.",
 };
 
-export default function WeddingVenuesPage() {
+export default async function WeddingVenuesPage() {
+  const [venuesPage, galleryItems] = await Promise.all([
+    getContent<VenuesContent>("wedding-venues"),
+    getGalleryImages("wedding-venues", { onlyPublished: true }),
+  ]);
+
   return (
     <>
       <PageHero image={venuesPage.heroImage} title={venuesPage.heroTitle} subtitle={venuesPage.heroSubtitle} />
@@ -27,8 +34,10 @@ export default function WeddingVenuesPage() {
         features={venuesPage.whyFeatures}
         stats={venuesPage.stats}
       />
-      <Gallery heading={venuesPage.galleryHeading} subheading={venuesPage.gallerySubheading} items={venuesPage.gallery} />
+      <Gallery heading={venuesPage.galleryHeading} subheading={venuesPage.gallerySubheading} items={galleryItems} />
       <ContactSection
+        contentPath="contact"
+        formType="wedding-venues"
         heading={venuesPage.contact.heading}
         subheading={venuesPage.contact.subheading}
         phone={venuesPage.contact.phone}

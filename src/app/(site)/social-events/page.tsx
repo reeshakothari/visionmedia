@@ -4,7 +4,9 @@ import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import JourneySteps from "@/components/JourneySteps";
 import Gallery from "@/components/Gallery";
 import ContactSection from "@/components/ContactSection";
-import { socialPage } from "@/lib/content";
+import { getContent, getGalleryImages, type SocialContent } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Social Events & Celebrations | Vision Media & Entertainment",
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
     "Create unforgettable social gatherings and celebrations with our comprehensive event planning services. From birthdays to anniversaries, we make every occasion special.",
 };
 
-export default function SocialEventsPage() {
+export default async function SocialEventsPage() {
+  const [socialPage, galleryItems] = await Promise.all([
+    getContent<SocialContent>("social-events"),
+    getGalleryImages("social-events", { onlyPublished: true }),
+  ]);
+
   return (
     <>
       <PageHero image={socialPage.heroImage} title={socialPage.heroTitle} subtitle={socialPage.heroSubtitle} />
@@ -22,8 +29,10 @@ export default function SocialEventsPage() {
         services={socialPage.services}
       />
       <JourneySteps heading={socialPage.journeyHeading} subheading={socialPage.journeySubheading} steps={socialPage.journey} />
-      <Gallery heading={socialPage.galleryHeading} subheading={socialPage.gallerySubheading} items={socialPage.gallery} />
+      <Gallery heading={socialPage.galleryHeading} subheading={socialPage.gallerySubheading} items={galleryItems} />
       <ContactSection
+        contentPath="contact"
+        formType="social-events"
         heading={socialPage.contact.heading}
         subheading={socialPage.contact.subheading}
         phone={socialPage.contact.phone}

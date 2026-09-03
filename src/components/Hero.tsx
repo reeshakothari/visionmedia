@@ -1,9 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import { hero } from "@/lib/content";
+import type { HomeContent } from "@/lib/cms";
+import { Field } from "@/components/editable/Field";
+import { EditableImage } from "@/components/editable/EditableImage";
 
 const tileClasses = [
   "col-span-2 row-span-2",
@@ -12,7 +13,7 @@ const tileClasses = [
   "col-span-2 row-span-1 md:col-span-1",
 ];
 
-export default function Hero() {
+export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 60]);
@@ -31,13 +32,16 @@ export default function Hero() {
         >
           <div className="divider-gold-center mb-6 md:mx-0" />
           <h1 className="font-display text-[2.75rem] leading-[1.05] text-white sm:text-6xl md:text-6xl lg:text-7xl">
-            {hero.titleLine1}
-            <span className="mt-1 block text-3xl text-gold-light italic sm:text-4xl md:text-4xl lg:text-5xl">
-              {hero.titleLine2}
-            </span>
+            <Field path="hero.titleLine1" value={hero.titleLine1} />
+            <Field
+              as="span"
+              path="hero.titleLine2"
+              value={hero.titleLine2}
+              className="mt-1 block text-3xl text-gold-light italic sm:text-4xl md:text-4xl lg:text-5xl"
+            />
           </h1>
           <p className="mx-auto mt-6 max-w-md text-[15px] leading-relaxed text-white/65 md:mx-0 md:text-base">
-            {hero.subtitle}
+            <Field path="hero.subtitle" value={hero.subtitle} />
           </p>
 
           <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row md:items-start">
@@ -45,13 +49,13 @@ export default function Hero() {
               href={hero.primaryCta.href}
               className="btn-gold tap-target inline-flex w-full items-center justify-center rounded-full px-9 py-3.5 text-[13px] sm:w-auto"
             >
-              {hero.primaryCta.label}
+              <Field path="hero.primaryCta.label" value={hero.primaryCta.label} />
             </a>
             <a
               href={hero.secondaryCta.href}
               className="btn-outline-gold tap-target inline-flex w-full items-center justify-center rounded-full px-9 py-3.5 text-[13px] sm:w-auto"
             >
-              {hero.secondaryCta.label}
+              <Field path="hero.secondaryCta.label" value={hero.secondaryCta.label} />
             </a>
           </div>
         </motion.div>
@@ -66,17 +70,18 @@ export default function Hero() {
                 transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className={`group hairline-light relative overflow-hidden rounded-xl shadow-premium-lg ${tileClasses[i]}`}
               >
-                <Image
+                <EditableImage
+                  path={`hero.images.${i}.src`}
                   src={img.src}
                   alt={img.alt}
                   fill
                   sizes="(min-width: 768px) 25vw, 45vw"
                   priority={i === 0}
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="transition-transform duration-700 ease-out group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/5 to-transparent" />
-                <span className="absolute inset-x-0 bottom-0 p-3 font-heading text-[11px] font-medium tracking-wide text-white/90">
-                  {img.title}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/85 via-navy/5 to-transparent" />
+                <span className="pointer-events-none absolute inset-x-0 bottom-0 z-10 p-3 font-heading text-[11px] font-medium tracking-wide text-white/90">
+                  <Field path={`hero.images.${i}.title`} value={img.title} />
                 </span>
               </motion.div>
             ))}

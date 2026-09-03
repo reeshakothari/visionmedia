@@ -4,7 +4,9 @@ import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import WhySection from "@/components/WhySection";
 import Gallery from "@/components/Gallery";
 import ContactSection from "@/components/ContactSection";
-import { corporatePage } from "@/lib/content";
+import { getContent, getGalleryImages, type CorporateContent } from "@/lib/cms";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Corporate Event Management Services | Vision Media & Entertainment",
@@ -12,7 +14,12 @@ export const metadata: Metadata = {
     "Professional corporate event management services including conferences, product launches, award ceremonies, and business celebrations. Excellence in every detail.",
 };
 
-export default function CorporateEventPage() {
+export default async function CorporateEventPage() {
+  const [corporatePage, galleryItems] = await Promise.all([
+    getContent<CorporateContent>("corporate-event"),
+    getGalleryImages("corporate-event", { onlyPublished: true }),
+  ]);
+
   return (
     <>
       <PageHero image={corporatePage.heroImage} title={corporatePage.heroTitle} subtitle={corporatePage.heroSubtitle} />
@@ -27,8 +34,10 @@ export default function CorporateEventPage() {
         features={corporatePage.whyFeatures}
         stats={corporatePage.stats}
       />
-      <Gallery heading={corporatePage.galleryHeading} subheading={corporatePage.gallerySubheading} items={corporatePage.gallery} />
+      <Gallery heading={corporatePage.galleryHeading} subheading={corporatePage.gallerySubheading} items={galleryItems} />
       <ContactSection
+        contentPath="contact"
+        formType="corporate-event"
         heading={corporatePage.contact.heading}
         subheading={corporatePage.contact.subheading}
         phone={corporatePage.contact.phone}

@@ -4,9 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { navLinks, siteInfo, socialLinks } from "@/lib/content";
+import type { GlobalContent } from "@/lib/cms";
 
-export default function Navbar() {
+export default function Navbar({
+  siteInfo,
+  navLinks,
+  socialLinks,
+}: {
+  siteInfo: GlobalContent["siteInfo"];
+  navLinks: GlobalContent["navLinks"];
+  socialLinks: GlobalContent["socialLinks"];
+}) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
