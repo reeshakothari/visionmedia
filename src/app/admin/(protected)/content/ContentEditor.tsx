@@ -204,7 +204,7 @@ function PagePreview({
         <Testimonials reviewsSection={c.reviewsSection} reviews={testimonials.filter((t) => t.is_published)} />
         <BlogPreview blogPreviewSection={c.blogPreviewSection} posts={blogPosts.filter((p) => p.is_published).slice(0, 3)} />
         <ContactSection
-          contentPath="homeContact"
+          basePath="homeContact"
           formType="home"
           heading={c.homeContact.heading}
           subheading={c.homeContact.subheading}
@@ -212,12 +212,11 @@ function PagePreview({
           phone={c.homeContact.phone}
           email={c.homeContact.email}
           address={c.homeContact.address}
-          fields={[
-            { kind: "text", name: "name", placeholder: "Your Name" },
-            { kind: "email", name: "email", placeholder: "Your Email" },
-            { kind: "text", name: "subject", placeholder: "Subject" },
-            { kind: "textarea", name: "message", placeholder: "Your Message" },
-          ]}
+          labels={c.homeContact.labels}
+          submitLabel={c.homeContact.submitLabel}
+          successMessage={c.homeContact.successMessage}
+          errorMessage={c.homeContact.errorMessage}
+          fields={c.homeContact.formFields}
         />
       </>
     );
@@ -251,29 +250,28 @@ function PagePreview({
                   <h3 className="font-display text-lg text-navy">{post.title}</h3>
                   <p className="badge badge-gold mt-2">{post.date_label}</p>
                   <p className="mt-3 text-sm text-muted">{post.excerpt}</p>
+                  <span className="mt-3 inline-block font-heading text-xs font-semibold tracking-wide text-gold-dark uppercase">
+                    {c.readMoreLabel}
+                  </span>
                 </article>
               ))}
             </div>
           </div>
         </section>
         <ContactSection
-          contentPath="blog"
+          basePath=""
           formType="blog"
           headingPath="ctaHeading"
           subheadingPath="ctaSubheading"
-          phonePath="phone"
-          emailPath="email"
           heading={c.ctaHeading}
           subheading={c.ctaSubheading}
           phone={c.phone}
           email={c.email}
-          fields={[
-            { kind: "text", name: "name", placeholder: "Your Name" },
-            { kind: "email", name: "email", placeholder: "Your Email" },
-            { kind: "text", name: "topic", placeholder: "Suggested Topic" },
-            { kind: "textarea", name: "message", placeholder: "Tell us more about your idea" },
-          ]}
-          submitLabel="Send"
+          labels={c.labels}
+          submitLabel={c.submitLabel}
+          successMessage={c.successMessage}
+          errorMessage={c.errorMessage}
+          fields={c.formFields}
         />
       </>
     );
@@ -300,7 +298,7 @@ function PagePreview({
       )}
       <Gallery heading={c.galleryHeading} subheading={c.gallerySubheading} items={galleryImages} />
       <ContactSection
-        contentPath="contact"
+        basePath="contact"
         formType={pageKey}
         heading={c.contact.heading}
         subheading={c.contact.subheading}
@@ -308,51 +306,12 @@ function PagePreview({
         email={c.contact.email}
         address={c.contact.address}
         hours={c.contact.hours}
-        fields={extraContactFields(pageKey, c.contact)}
+        labels={c.contact.labels}
+        submitLabel={c.contact.submitLabel}
+        successMessage={c.contact.successMessage}
+        errorMessage={c.contact.errorMessage}
+        fields={c.contact.formFields}
       />
     </>
   );
-}
-
-function extraContactFields(
-  pageKey: PageKey,
-  contact: WeddingContent["contact"] | CorporateContent["contact"] | VenuesContent["contact"] | SocialContent["contact"]
-) {
-  const base = [
-    { kind: "text" as const, name: "name", placeholder: "Your Name" },
-    { kind: "email" as const, name: "email", placeholder: "Your Email" },
-  ];
-  if (pageKey === "wedding" && "weddingTypeOptions" in contact) {
-    return [
-      ...base,
-      { kind: "text" as const, name: "partner-name", placeholder: "Partner's Name" },
-      { kind: "select" as const, name: "wedding-type", placeholder: "Select Wedding Type", options: contact.weddingTypeOptions },
-      { kind: "textarea" as const, name: "message", placeholder: "Tell us about your dream wedding" },
-    ];
-  }
-  if (pageKey === "corporate-event" && "eventTypeOptions" in contact) {
-    return [
-      ...base,
-      { kind: "text" as const, name: "company", placeholder: "Company Name" },
-      { kind: "select" as const, name: "event-type", placeholder: "Select Event Type", options: contact.eventTypeOptions },
-      { kind: "textarea" as const, name: "message", placeholder: "Tell us about your event requirements" },
-    ];
-  }
-  if (pageKey === "wedding-venues" && "venueTypeOptions" in contact) {
-    return [
-      ...base,
-      { kind: "text" as const, name: "partner-name", placeholder: "Partner's Name" },
-      { kind: "select" as const, name: "venue-type", placeholder: "Select Venue Type", options: contact.venueTypeOptions },
-      { kind: "textarea" as const, name: "message", placeholder: "Tell us about your venue requirements" },
-    ];
-  }
-  if ("eventCategoryOptions" in contact) {
-    return [
-      ...base,
-      { kind: "text" as const, name: "event-name", placeholder: "Event Name/Type" },
-      { kind: "select" as const, name: "event-category", placeholder: "Select Event Type", options: contact.eventCategoryOptions },
-      { kind: "textarea" as const, name: "message", placeholder: "Tell us about your celebration ideas" },
-    ];
-  }
-  return base;
 }

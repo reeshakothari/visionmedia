@@ -36,7 +36,7 @@ export default async function CorporateEventPage() {
       />
       <Gallery heading={corporatePage.galleryHeading} subheading={corporatePage.gallerySubheading} items={galleryItems} />
       <ContactSection
-        contentPath="contact"
+        basePath="contact"
         formType="corporate-event"
         heading={corporatePage.contact.heading}
         subheading={corporatePage.contact.subheading}
@@ -44,13 +44,11 @@ export default async function CorporateEventPage() {
         email={corporatePage.contact.email}
         address={corporatePage.contact.address}
         hours={corporatePage.contact.hours}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "company", placeholder: "Company Name" },
-          { kind: "select", name: "event-type", placeholder: "Select Event Type", options: corporatePage.contact.eventTypeOptions },
-          { kind: "textarea", name: "message", placeholder: "Tell us about your event requirements" },
-        ]}
+        labels={corporatePage.contact.labels}
+        submitLabel={corporatePage.contact.submitLabel}
+        successMessage={corporatePage.contact.successMessage}
+        errorMessage={corporatePage.contact.errorMessage}
+        fields={corporatePage.contact.formFields}
       />
     </>
   );

@@ -6,14 +6,75 @@ import { useState } from "react";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
 import { EditableImage } from "@/components/editable/EditableImage";
+import { useEditable } from "@/components/editable/context";
+import { EditPanel, EditInput } from "@/components/editable/EditPanel";
 import type { HomeContent } from "@/lib/cms";
 
 type ServiceCard = HomeContent["serviceCards"][number];
 
-function ServiceCard({ card, index }: { card: ServiceCard; index: number }) {
+function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: number; tapHint: string }) {
+  const ctx = useEditable();
   const isFirst = index === 0;
   const [flipped, setFlipped] = useState(false);
   const base = `serviceCards.${index}`;
+
+  // The public site uses a 3D flip card to reveal the back face on
+  // hover/click. That transform + pointer-events juggling makes individual
+  // fields hard to click reliably, so the admin editor instead shows both
+  // faces stacked and always visible/editable — no flip needed.
+  if (ctx) {
+    return (
+      <div className="hairline shadow-premium overflow-hidden rounded-2xl bg-white">
+        <div className="relative h-44 w-full">
+          <EditableImage
+            path={`${base}.image`}
+            src={card.image}
+            alt={card.frontTitle}
+            fill
+            sizes="(min-width: 768px) 25vw, 90vw"
+            priority={isFirst}
+          />
+        </div>
+        <div className="space-y-1 p-5">
+          <h3 className="font-display text-xl text-navy">
+            <Field path={`${base}.frontTitle`} value={card.frontTitle} />
+          </h3>
+          <p className="text-xs font-medium uppercase tracking-wide text-gold-dark">
+            <Field path={`${base}.frontSubtitle`} value={card.frontSubtitle} />
+          </p>
+
+          <div className="mt-4 border-t border-navy/10 pt-4 text-left">
+            <h4 className="font-display text-lg text-navy">
+              <Field path={`${base}.backTitle`} value={card.backTitle} />
+            </h4>
+            <p className="mt-1.5 text-sm text-muted">
+              <Field path={`${base}.backText`} value={card.backText} />
+            </p>
+            <ul className="mt-3 space-y-1.5">
+              {card.items.map((item, j) => (
+                <li key={j} className="flex items-start gap-1.5 text-xs font-medium text-navy/70">
+                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-dark" aria-hidden />
+                  <Field path={`${base}.items.${j}`} value={item} />
+                </li>
+              ))}
+            </ul>
+            <p className="badge badge-gold mt-3 inline-block">
+              <Field path={`${base}.rating`} value={card.rating} />
+            </p>
+            <p className="mt-3 text-xs text-muted-light">
+              Button text:{" "}
+              <Field
+                as="span"
+                path={`${base}.ctaLabel`}
+                value={card.ctaLabel}
+                className="font-semibold text-gold-dark"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Reveal delay={index * 100}>
@@ -57,7 +118,7 @@ function ServiceCard({ card, index }: { card: ServiceCard; index: number }) {
                 <Field path={`${base}.frontSubtitle`} value={card.frontSubtitle} />
               </p>
               <span className="mt-3 inline-block font-heading text-[11px] font-medium tracking-wide text-white/60 md:hidden">
-                Tap to explore →
+                {tapHint}
               </span>
             </div>
           </div>
@@ -123,9 +184,13 @@ export default function ServiceCards({
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {serviceCards.map((card, i) => (
-            <ServiceCard key={i} card={card} index={i} />
+            <ServiceCard key={i} card={card} index={i} tapHint={servicesSection.tapHint} />
           ))}
         </div>
+
+        <EditPanel title="Mobile-only helper text">
+          <EditInput path="servicesSection.tapHint" label={'"Tap to explore" hint'} value={servicesSection.tapHint} />
+        </EditPanel>
       </div>
     </section>
   );

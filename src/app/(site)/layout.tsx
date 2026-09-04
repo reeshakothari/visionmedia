@@ -35,7 +35,12 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
 
   return (
     <>
-      <Navbar siteInfo={global.siteInfo} navLinks={global.navLinks} socialLinks={global.socialLinks} />
+      <Navbar
+        siteInfo={global.siteInfo}
+        navLinks={global.navLinks}
+        socialLinks={global.socialLinks}
+        navCtaLabel={global.headerFooter.navCtaLabel}
+      />
       <main className="flex-1">{children}</main>
       <Footer
         siteInfo={global.siteInfo}
@@ -43,6 +48,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         copyright={global.copyright}
         contact={home.homeContact}
         footerByPath={footerByPath}
+        headerFooter={global.headerFooter}
       />
     </>
   );

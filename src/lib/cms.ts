@@ -34,6 +34,7 @@ export const pageDefaults: Record<PageKey, Record<string, unknown>> = {
     footerLinksStandard: content.footerLinksStandard,
     footerLinksBlog: content.footerLinksBlog,
     copyright: content.copyright,
+    headerFooter: content.headerFooter,
   },
 };
 
@@ -61,12 +62,37 @@ export type GlobalContent = {
   footerLinksStandard: typeof content.footerLinksStandard;
   footerLinksBlog: typeof content.footerLinksBlog;
   copyright: typeof content.copyright;
+  headerFooter: typeof content.headerFooter;
 };
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+// Deep merge so that fields added to content.ts *after* a page row was saved
+// still show up, instead of being swallowed by the stored object. Saved values
+// always win; defaults only fill gaps. Arrays take their length from the saved
+// value (so removed/reordered items stick) but merge element-wise, which lets
+// new fields inside existing list items fall back too.
+function deepMerge(base: unknown, override: unknown): unknown {
+  if (override === undefined) return base;
+  if (Array.isArray(base) && Array.isArray(override)) {
+    return override.map((item, i) => (i < base.length ? deepMerge(base[i], item) : item));
+  }
+  if (isPlainObject(base) && isPlainObject(override)) {
+    const result: Record<string, unknown> = { ...base };
+    for (const [key, value] of Object.entries(override)) {
+      result[key] = key in base ? deepMerge(base[key], value) : value;
+    }
+    return result;
+  }
+  return override;
+}
 
 function mergeWithDefaults(page: PageKey, dbValue: Record<string, unknown> | null | undefined) {
   const base = pageDefaults[page];
   if (!dbValue || Object.keys(dbValue).length === 0) return base;
-  return { ...base, ...dbValue };
+  return deepMerge(base, dbValue) as Record<string, unknown>;
 }
 
 async function fetchRow(page: PageKey) {

@@ -10,10 +10,12 @@ export default function Navbar({
   siteInfo,
   navLinks,
   socialLinks,
+  navCtaLabel,
 }: {
   siteInfo: GlobalContent["siteInfo"];
   navLinks: GlobalContent["navLinks"];
   socialLinks: GlobalContent["socialLinks"];
+  navCtaLabel: string;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -69,7 +71,7 @@ export default function Navbar({
             href={socialLinks.call}
             className="btn-outline-gold tap-target inline-flex items-center justify-center rounded-full px-6 py-2.5 text-xs"
           >
-            Call Now
+            {navCtaLabel}
           </a>
         </div>
 
@@ -121,7 +123,7 @@ export default function Navbar({
             </ul>
             <div className="px-5 pb-6 pt-2">
               <a href={socialLinks.call} className="btn-gold tap-target flex w-full items-center justify-center rounded-full px-5 py-3 text-xs">
-                Call Now
+                {navCtaLabel}
               </a>
             </div>
           </motion.div>

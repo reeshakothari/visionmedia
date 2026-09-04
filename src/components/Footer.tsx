@@ -40,12 +40,14 @@ export default function Footer({
   copyright,
   contact,
   footerByPath,
+  headerFooter,
 }: {
   siteInfo: GlobalContent["siteInfo"];
   socialLinks: GlobalContent["socialLinks"];
   copyright: GlobalContent["copyright"];
   contact: HomeContent["homeContact"];
   footerByPath: Record<string, { text: string; links: { label: string; href: string }[] }>;
+  headerFooter: GlobalContent["headerFooter"];
 }) {
   const pathname = usePathname();
   const { text, links } = footerByPath[pathname] ?? footerByPath["/"];
@@ -62,7 +64,9 @@ export default function Footer({
           </div>
 
           <div>
-            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">Quick Links</h4>
+            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">
+              {headerFooter.footerQuickLinksHeading}
+            </h4>
             <ul className="mt-4 space-y-2">
               {links.map((link) => (
                 <li key={link.label}>
@@ -75,7 +79,9 @@ export default function Footer({
           </div>
 
           <div>
-            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">Contact</h4>
+            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">
+              {headerFooter.footerContactHeading}
+            </h4>
             <ul className="mt-4 space-y-2 text-sm text-white/60">
               <li>
                 <a href={socialLinks.call} className="hover:text-gold-light">{contact.phone}</a>
@@ -88,19 +94,21 @@ export default function Footer({
           </div>
 
           <div>
-            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">Follow Us</h4>
+            <h4 className="font-heading text-xs font-semibold tracking-[0.15em] text-gold uppercase">
+              {headerFooter.footerFollowHeading}
+            </h4>
             <div className="mt-4 flex flex-col gap-3">
               <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="tap-target flex items-center gap-3 text-sm text-white/60 transition-colors hover:text-gold-light">
-                <FacebookIcon /> Facebook
+                <FacebookIcon /> {headerFooter.socialLabels.facebook}
               </a>
               <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="tap-target flex items-center gap-3 text-sm text-white/60 transition-colors hover:text-gold-light">
-                <InstagramIcon /> Instagram
+                <InstagramIcon /> {headerFooter.socialLabels.instagram}
               </a>
               <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="tap-target flex items-center gap-3 text-sm text-white/60 transition-colors hover:text-gold-light">
-                <LinkedInIcon /> LinkedIn
+                <LinkedInIcon /> {headerFooter.socialLabels.linkedin}
               </a>
               <a href={socialLinks.call} className="tap-target flex items-center gap-3 text-sm text-white/60 transition-colors hover:text-gold-light">
-                <CallIcon /> Call Now
+                <CallIcon /> {headerFooter.socialLabels.call}
               </a>
             </div>
           </div>

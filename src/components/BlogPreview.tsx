@@ -1,13 +1,14 @@
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
+import { EditPanel, EditInput } from "@/components/editable/EditPanel";
 import type { HomeContent, BlogPost } from "@/lib/cms";
 
 export default function BlogPreview({
   blogPreviewSection,
   posts,
 }: {
-  blogPreviewSection: Pick<HomeContent["blogPreviewSection"], "heading" | "subheading" | "ctaText" | "ctaLabel">;
+  blogPreviewSection: Pick<HomeContent["blogPreviewSection"], "heading" | "subheading" | "ctaText" | "ctaLabel" | "readMoreLabel">;
   posts: BlogPost[];
 }) {
   return (
@@ -35,7 +36,7 @@ export default function BlogPreview({
                 <h3 className="font-display text-xl text-navy">{post.title}</h3>
                 <p className="mt-3 text-sm leading-relaxed text-muted">{post.excerpt}</p>
                 <span className="mt-5 inline-block font-heading text-xs font-semibold tracking-wide text-gold-dark uppercase">
-                  Read More →
+                  {blogPreviewSection.readMoreLabel}
                 </span>
               </Link>
             </Reveal>
@@ -52,6 +53,14 @@ export default function BlogPreview({
             </Link>
           </div>
         </Reveal>
+
+        <EditPanel title="Blog card link text">
+          <EditInput
+            path="blogPreviewSection.readMoreLabel"
+            label={'"Read More" label'}
+            value={blogPreviewSection.readMoreLabel}
+          />
+        </EditPanel>
       </div>
     </section>
   );

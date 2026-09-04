@@ -7,11 +7,13 @@ import type { GlobalContent } from "@/lib/cms";
 
 function TextField({ path, label, defaultValue }: { path: string; label: string; defaultValue: string }) {
   const ctx = useEditable()!;
+  const current = (ctx.get(path) as string | undefined) ?? defaultValue;
   return (
     <div>
       <label className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted-light">{label}</label>
       <input
-        defaultValue={(ctx.get(path) as string) ?? defaultValue}
+        key={current}
+        defaultValue={current}
         onBlur={(e) => ctx.set(path, e.target.value)}
         className="w-full rounded-lg border border-navy/15 px-3 py-2 text-sm outline-none focus:border-gold"
       />
@@ -73,19 +75,54 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
       </div>
 
       <div>
-        <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Navigation Labels</h2>
+        <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Navigation</h2>
         <p className="mt-1 text-xs text-muted-light">Menu link destinations stay the same — only the label text can be changed here.</p>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {global.navLinks.map((link, i) => (
             <TextField key={i} path={`navLinks.${i}.label`} label={link.href} defaultValue={link.label} />
           ))}
+          <TextField path="headerFooter.navCtaLabel" label="Call button" defaultValue={global.headerFooter.navCtaLabel} />
         </div>
       </div>
 
       <div>
         <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Footer</h2>
-        <div className="mt-4">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <TextField path="copyright" label="Copyright line" defaultValue={global.copyright} />
+          <TextField
+            path="headerFooter.footerQuickLinksHeading"
+            label={'"Quick Links" heading'}
+            defaultValue={global.headerFooter.footerQuickLinksHeading}
+          />
+          <TextField
+            path="headerFooter.footerContactHeading"
+            label={'"Contact" heading'}
+            defaultValue={global.headerFooter.footerContactHeading}
+          />
+          <TextField
+            path="headerFooter.footerFollowHeading"
+            label={'"Follow Us" heading'}
+            defaultValue={global.headerFooter.footerFollowHeading}
+          />
+        </div>
+        <p className="mb-1 mt-5 text-[11px] font-semibold uppercase tracking-wide text-muted-light">Social link labels</p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <TextField
+            path="headerFooter.socialLabels.facebook"
+            label="Facebook"
+            defaultValue={global.headerFooter.socialLabels.facebook}
+          />
+          <TextField
+            path="headerFooter.socialLabels.instagram"
+            label="Instagram"
+            defaultValue={global.headerFooter.socialLabels.instagram}
+          />
+          <TextField
+            path="headerFooter.socialLabels.linkedin"
+            label="LinkedIn"
+            defaultValue={global.headerFooter.socialLabels.linkedin}
+          />
+          <TextField path="headerFooter.socialLabels.call" label="Call" defaultValue={global.headerFooter.socialLabels.call} />
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ export default async function BlogPage() {
                   <p className="badge badge-gold mt-2">{post.date_label}</p>
                   <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">{post.excerpt}</p>
                   <span className="mt-5 inline-block font-heading text-xs font-semibold tracking-wide text-gold-dark uppercase">
-                    Read More →
+                    {blogPage.readMoreLabel}
                   </span>
                 </article>
               </Reveal>
@@ -61,23 +61,19 @@ export default async function BlogPage() {
       </section>
 
       <ContactSection
-        contentPath="blog"
+        basePath=""
         formType="blog"
         headingPath="ctaHeading"
         subheadingPath="ctaSubheading"
-        phonePath="phone"
-        emailPath="email"
         heading={blogPage.ctaHeading}
         subheading={blogPage.ctaSubheading}
         phone={blogPage.phone}
         email={blogPage.email}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "topic", placeholder: "Suggested Topic" },
-          { kind: "textarea", name: "message", placeholder: "Tell us more about your idea" },
-        ]}
-        submitLabel="Send"
+        labels={blogPage.labels}
+        submitLabel={blogPage.submitLabel}
+        successMessage={blogPage.successMessage}
+        errorMessage={blogPage.errorMessage}
+        fields={blogPage.formFields}
       />
     </>
   );

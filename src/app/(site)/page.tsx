@@ -35,7 +35,7 @@ export default async function Home() {
       <Testimonials reviewsSection={reviewsSection} reviews={reviews} />
       <BlogPreview blogPreviewSection={blogPreviewSection} posts={posts} />
       <ContactSection
-        contentPath="homeContact"
+        basePath="homeContact"
         formType="home"
         heading={homeContact.heading}
         subheading={homeContact.subheading}
@@ -43,12 +43,11 @@ export default async function Home() {
         phone={homeContact.phone}
         email={homeContact.email}
         address={homeContact.address}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "subject", placeholder: "Subject" },
-          { kind: "textarea", name: "message", placeholder: "Your Message" },
-        ]}
+        labels={homeContact.labels}
+        submitLabel={homeContact.submitLabel}
+        successMessage={homeContact.successMessage}
+        errorMessage={homeContact.errorMessage}
+        fields={homeContact.formFields}
       />
     </>
   );

@@ -31,7 +31,7 @@ export default async function WeddingPage() {
       <JourneySteps heading={weddingPage.journeyHeading} subheading={weddingPage.journeySubheading} steps={weddingPage.journey} />
       <Gallery heading={weddingPage.galleryHeading} subheading={weddingPage.gallerySubheading} items={galleryItems} />
       <ContactSection
-        contentPath="contact"
+        basePath="contact"
         formType="wedding"
         heading={weddingPage.contact.heading}
         subheading={weddingPage.contact.subheading}
@@ -39,13 +39,11 @@ export default async function WeddingPage() {
         email={weddingPage.contact.email}
         address={weddingPage.contact.address}
         hours={weddingPage.contact.hours}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "partner-name", placeholder: "Partner's Name" },
-          { kind: "select", name: "wedding-type", placeholder: "Select Wedding Type", options: weddingPage.contact.weddingTypeOptions },
-          { kind: "textarea", name: "message", placeholder: "Tell us about your dream wedding" },
-        ]}
+        labels={weddingPage.contact.labels}
+        submitLabel={weddingPage.contact.submitLabel}
+        successMessage={weddingPage.contact.successMessage}
+        errorMessage={weddingPage.contact.errorMessage}
+        fields={weddingPage.contact.formFields}
       />
     </>
   );

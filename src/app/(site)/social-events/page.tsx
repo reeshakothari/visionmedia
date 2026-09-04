@@ -31,7 +31,7 @@ export default async function SocialEventsPage() {
       <JourneySteps heading={socialPage.journeyHeading} subheading={socialPage.journeySubheading} steps={socialPage.journey} />
       <Gallery heading={socialPage.galleryHeading} subheading={socialPage.gallerySubheading} items={galleryItems} />
       <ContactSection
-        contentPath="contact"
+        basePath="contact"
         formType="social-events"
         heading={socialPage.contact.heading}
         subheading={socialPage.contact.subheading}
@@ -39,13 +39,11 @@ export default async function SocialEventsPage() {
         email={socialPage.contact.email}
         address={socialPage.contact.address}
         hours={socialPage.contact.hours}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "event-name", placeholder: "Event Name/Type" },
-          { kind: "select", name: "event-category", placeholder: "Select Event Type", options: socialPage.contact.eventCategoryOptions },
-          { kind: "textarea", name: "message", placeholder: "Tell us about your celebration ideas" },
-        ]}
+        labels={socialPage.contact.labels}
+        submitLabel={socialPage.contact.submitLabel}
+        successMessage={socialPage.contact.successMessage}
+        errorMessage={socialPage.contact.errorMessage}
+        fields={socialPage.contact.formFields}
       />
     </>
   );

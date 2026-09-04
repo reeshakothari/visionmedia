@@ -22,6 +22,28 @@ export const PAGE_LABELS: Record<PageKey, string> = {
   global: "Header & Footer",
 };
 
+/** Shape of a single field in a contact form. Lives here (rather than in the
+ * component) so content.ts can type its editable form definitions. */
+export type ContactField =
+  | { kind: "text"; name: string; placeholder: string }
+  | { kind: "email"; name: string; placeholder: string }
+  | { kind: "select"; name: string; placeholder: string; options: { value: string; label: string }[] }
+  | { kind: "textarea"; name: string; placeholder: string };
+
+export type ContactLabels = { phone: string; email: string; address: string; hours: string };
+
+export const CONTACT_LABELS: ContactLabels = {
+  phone: "Phone",
+  email: "Email",
+  address: "Address",
+  hours: "Business Hours",
+};
+
+export const CONTACT_MESSAGES = {
+  success: "Thank you — taking you to WhatsApp to continue the conversation…",
+  error: "Something went wrong. Please try again or call us directly.",
+};
+
 export const ROUTE_FOR_PAGE: Record<PageKey, string> = {
   home: "/",
   wedding: "/wedding",

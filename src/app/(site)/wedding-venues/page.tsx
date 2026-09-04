@@ -36,7 +36,7 @@ export default async function WeddingVenuesPage() {
       />
       <Gallery heading={venuesPage.galleryHeading} subheading={venuesPage.gallerySubheading} items={galleryItems} />
       <ContactSection
-        contentPath="contact"
+        basePath="contact"
         formType="wedding-venues"
         heading={venuesPage.contact.heading}
         subheading={venuesPage.contact.subheading}
@@ -44,13 +44,11 @@ export default async function WeddingVenuesPage() {
         email={venuesPage.contact.email}
         address={venuesPage.contact.address}
         hours={venuesPage.contact.hours}
-        fields={[
-          { kind: "text", name: "name", placeholder: "Your Name" },
-          { kind: "email", name: "email", placeholder: "Your Email" },
-          { kind: "text", name: "partner-name", placeholder: "Partner's Name" },
-          { kind: "select", name: "venue-type", placeholder: "Select Venue Type", options: venuesPage.contact.venueTypeOptions },
-          { kind: "textarea", name: "message", placeholder: "Tell us about your venue requirements" },
-        ]}
+        labels={venuesPage.contact.labels}
+        submitLabel={venuesPage.contact.submitLabel}
+        successMessage={venuesPage.contact.successMessage}
+        errorMessage={venuesPage.contact.errorMessage}
+        fields={venuesPage.contact.formFields}
       />
     </>
   );

@@ -3,9 +3,26 @@
 // (index.html, wedding.html, corporate-event.html, wedding-venues.html,
 // social-events.html, blog.html). Do not paraphrase or invent content here.
 
+import type { ContactField } from "./pages";
+import { CONTACT_LABELS, CONTACT_MESSAGES } from "./pages";
+
 export const siteInfo = {
   name: "Vision Media & Entertainment",
   logo: "/images/logo.png",
+};
+
+// Header/footer chrome labels — editable from the admin's "Header & Footer" tab.
+export const headerFooter = {
+  navCtaLabel: "Call Now",
+  footerQuickLinksHeading: "Quick Links",
+  footerContactHeading: "Contact",
+  footerFollowHeading: "Follow Us",
+  socialLabels: {
+    facebook: "Facebook",
+    instagram: "Instagram",
+    linkedin: "LinkedIn",
+    call: "Call Now",
+  },
 };
 
 export const navLinks = [
@@ -78,6 +95,7 @@ export const hero = {
 export const servicesSection = {
   heading: "Our Premium Services",
   subheading: "Delivering excellence across all aspects of event management and hospitality",
+  tapHint: "Tap to explore →",
 };
 
 export const serviceCards = [
@@ -239,6 +257,7 @@ export const blogPreviewSection = {
   ],
   ctaText: "Read more tips and stories on our blog",
   ctaLabel: "Visit Blog",
+  readMoreLabel: "Read More →",
 };
 
 export const homeContact = {
@@ -249,6 +268,16 @@ export const homeContact = {
   email: "info@visionmediaent.com",
   address: "123 Event Avenue, City, State 12345",
   fields: { name: "name", email: "email", subject: "subject", message: "message" },
+  labels: CONTACT_LABELS,
+  submitLabel: "Send Message",
+  successMessage: CONTACT_MESSAGES.success,
+  errorMessage: CONTACT_MESSAGES.error,
+  formFields: [
+    { kind: "text", name: "name", placeholder: "Your Name" },
+    { kind: "email", name: "email", placeholder: "Your Email" },
+    { kind: "text", name: "subject", placeholder: "Subject" },
+    { kind: "textarea", name: "message", placeholder: "Your Message" },
+  ] as ContactField[],
 };
 
 export const footerContent = {
@@ -308,6 +337,29 @@ export const weddingPage = {
       { value: "cultural", label: "Cultural Wedding" },
       { value: "other", label: "Other" },
     ],
+    labels: CONTACT_LABELS,
+    submitLabel: "Send Message",
+    successMessage: CONTACT_MESSAGES.success,
+    errorMessage: CONTACT_MESSAGES.error,
+    formFields: [
+      { kind: "text", name: "name", placeholder: "Your Name" },
+      { kind: "email", name: "email", placeholder: "Your Email" },
+      { kind: "text", name: "partner-name", placeholder: "Partner's Name" },
+      {
+        kind: "select",
+        name: "wedding-type",
+        placeholder: "Select Wedding Type",
+        options: [
+          { value: "traditional", label: "Traditional Wedding" },
+          { value: "destination", label: "Destination Wedding" },
+          { value: "intimate", label: "Intimate Ceremony" },
+          { value: "grand", label: "Grand Celebration" },
+          { value: "cultural", label: "Cultural Wedding" },
+          { value: "other", label: "Other" },
+        ],
+      },
+      { kind: "textarea", name: "message", placeholder: "Tell us about your dream wedding" },
+    ] as ContactField[],
   },
   footerText: "Creating magical wedding experiences through professional planning and exceptional service.",
 };
@@ -373,6 +425,29 @@ export const corporatePage = {
       { value: "trade-show", label: "Trade Show" },
       { value: "other", label: "Other" },
     ],
+    labels: CONTACT_LABELS,
+    submitLabel: "Send Message",
+    successMessage: CONTACT_MESSAGES.success,
+    errorMessage: CONTACT_MESSAGES.error,
+    formFields: [
+      { kind: "text", name: "name", placeholder: "Your Name" },
+      { kind: "email", name: "email", placeholder: "Your Email" },
+      { kind: "text", name: "company", placeholder: "Company Name" },
+      {
+        kind: "select",
+        name: "event-type",
+        placeholder: "Select Event Type",
+        options: [
+          { value: "conference", label: "Conference & Seminar" },
+          { value: "award", label: "Award Ceremony" },
+          { value: "launch", label: "Product Launch" },
+          { value: "team-building", label: "Team Building" },
+          { value: "trade-show", label: "Trade Show" },
+          { value: "other", label: "Other" },
+        ],
+      },
+      { kind: "textarea", name: "message", placeholder: "Tell us about your event requirements" },
+    ] as ContactField[],
   },
   footerText: "Creating exceptional corporate experiences through professional event management and hospitality services.",
 };
@@ -435,6 +510,30 @@ export const venuesPage = {
       { value: "destination", label: "Destination Venue" },
       { value: "other", label: "Other" },
     ],
+    labels: CONTACT_LABELS,
+    submitLabel: "Send Message",
+    successMessage: CONTACT_MESSAGES.success,
+    errorMessage: CONTACT_MESSAGES.error,
+    formFields: [
+      { kind: "text", name: "name", placeholder: "Your Name" },
+      { kind: "email", name: "email", placeholder: "Your Email" },
+      { kind: "text", name: "partner-name", placeholder: "Partner's Name" },
+      {
+        kind: "select",
+        name: "venue-type",
+        placeholder: "Select Venue Type",
+        options: [
+          { value: "luxury", label: "Luxury Venue" },
+          { value: "garden", label: "Garden Venue" },
+          { value: "historic", label: "Historic Mansion" },
+          { value: "beach", label: "Beach Venue" },
+          { value: "resort", label: "Hotel/Resort" },
+          { value: "destination", label: "Destination Venue" },
+          { value: "other", label: "Other" },
+        ],
+      },
+      { kind: "textarea", name: "message", placeholder: "Tell us about your venue requirements" },
+    ] as ContactField[],
   },
   footerText: "Creating magical wedding experiences through exclusive venues and exceptional service.",
 };
@@ -500,6 +599,30 @@ export const socialPage = {
       { value: "achievement", label: "Achievement Celebration" },
       { value: "other", label: "Other" },
     ],
+    labels: CONTACT_LABELS,
+    submitLabel: "Send Message",
+    successMessage: CONTACT_MESSAGES.success,
+    errorMessage: CONTACT_MESSAGES.error,
+    formFields: [
+      { kind: "text", name: "name", placeholder: "Your Name" },
+      { kind: "email", name: "email", placeholder: "Your Email" },
+      { kind: "text", name: "event-name", placeholder: "Event Name/Type" },
+      {
+        kind: "select",
+        name: "event-category",
+        placeholder: "Select Event Type",
+        options: [
+          { value: "birthday", label: "Birthday Party" },
+          { value: "anniversary", label: "Anniversary" },
+          { value: "graduation", label: "Graduation Party" },
+          { value: "holiday", label: "Holiday Celebration" },
+          { value: "themed", label: "Custom Themed Event" },
+          { value: "achievement", label: "Achievement Celebration" },
+          { value: "other", label: "Other" },
+        ],
+      },
+      { kind: "textarea", name: "message", placeholder: "Tell us about your celebration ideas" },
+    ] as ContactField[],
   },
   footerText: "Creating memorable social celebrations and special occasions that bring people together.",
 };
@@ -537,6 +660,17 @@ export const blogPage = {
   email: "info@visionmediaent.com",
   phone: "+91 90289 49398",
   footerText: "Stories and insights to help you plan unforgettable experiences.",
+  readMoreLabel: "Read More →",
+  labels: CONTACT_LABELS,
+  submitLabel: "Send",
+  successMessage: CONTACT_MESSAGES.success,
+  errorMessage: CONTACT_MESSAGES.error,
+  formFields: [
+    { kind: "text", name: "name", placeholder: "Your Name" },
+    { kind: "email", name: "email", placeholder: "Your Email" },
+    { kind: "text", name: "topic", placeholder: "Suggested Topic" },
+    { kind: "textarea", name: "message", placeholder: "Tell us more about your idea" },
+  ] as ContactField[],
 };
 
 footerByPath["/blog"] = { text: blogPage.footerText, links: footerLinksBlog };
