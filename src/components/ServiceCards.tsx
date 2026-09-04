@@ -70,6 +70,17 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
                 className="font-semibold text-gold-dark"
               />
             </p>
+            <label className="mt-2 block">
+              <span className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-muted-light">
+                Button link
+              </span>
+              <input
+                key={(ctx.get(`${base}.href`) as string | undefined) ?? card.href}
+                defaultValue={(ctx.get(`${base}.href`) as string | undefined) ?? card.href}
+                onBlur={(e) => ctx.set(`${base}.href`, e.target.value)}
+                className="w-full rounded-lg border border-navy/15 px-2.5 py-1.5 text-xs outline-none focus:border-gold"
+              />
+            </label>
           </div>
         </div>
       </div>

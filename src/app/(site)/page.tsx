@@ -30,7 +30,7 @@ export default async function Home() {
         headingPath="gallerySection.heading"
         subheadingPath="gallerySection.subheading"
         items={galleryItems}
-        cta={{ text: gallerySection.ctaText, label: gallerySection.ctaLabel, href: "#contact" }}
+        cta={{ text: gallerySection.ctaText, label: gallerySection.ctaLabel, href: gallerySection.ctaHref }}
       />
       <Testimonials reviewsSection={reviewsSection} reviews={reviews} />
       <BlogPreview blogPreviewSection={blogPreviewSection} posts={posts} />

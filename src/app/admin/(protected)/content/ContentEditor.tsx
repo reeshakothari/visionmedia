@@ -199,7 +199,7 @@ function PagePreview({
           headingPath="gallerySection.heading"
           subheadingPath="gallerySection.subheading"
           items={galleryImages}
-          cta={{ text: c.gallerySection.ctaText, label: c.gallerySection.ctaLabel, href: "#contact" }}
+          cta={{ text: c.gallerySection.ctaText, label: c.gallerySection.ctaLabel, href: c.gallerySection.ctaHref }}
         />
         <Testimonials reviewsSection={c.reviewsSection} reviews={testimonials.filter((t) => t.is_published)} />
         <BlogPreview blogPreviewSection={c.blogPreviewSection} posts={blogPosts.filter((p) => p.is_published).slice(0, 3)} />

@@ -1,6 +1,10 @@
+"use client";
+
 import FadeImage from "@/components/FadeImage";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
+import { EditPanel, EditInput } from "@/components/editable/EditPanel";
+import { useEditable } from "@/components/editable/context";
 import type { GalleryImage } from "@/lib/cms";
 
 export default function Gallery({
@@ -20,6 +24,9 @@ export default function Gallery({
   items: GalleryImage[];
   cta?: { text: string; label: string; href: string };
 }) {
+  const ctx = useEditable();
+  const ctaHref = cta ? ((ctx?.get("gallerySection.ctaHref") as string | undefined) ?? cta.href) : undefined;
+
   return (
     <section id={id} className="bg-white px-4 py-20 sm:px-6 md:py-28">
       <div className="mx-auto max-w-6xl">
@@ -63,11 +70,17 @@ export default function Gallery({
               <p className="mb-5 font-display text-xl text-navy sm:text-2xl">
                 <Field path="gallerySection.ctaText" value={cta.text} />
               </p>
-              <a href={cta.href} className="btn-gold tap-target inline-block rounded-full px-9 py-3.5 text-[13px]">
+              <a href={ctaHref} className="btn-gold tap-target inline-block rounded-full px-9 py-3.5 text-[13px]">
                 <Field path="gallerySection.ctaLabel" value={cta.label} />
               </a>
             </div>
           </Reveal>
+        )}
+
+        {cta && (
+          <EditPanel title="Gallery button destination">
+            <EditInput path="gallerySection.ctaHref" label="Link destination" value={cta.href} />
+          </EditPanel>
         )}
       </div>
     </section>

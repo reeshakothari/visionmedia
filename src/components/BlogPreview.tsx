@@ -1,16 +1,25 @@
+"use client";
+
 import Link from "next/link";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
 import { EditPanel, EditInput } from "@/components/editable/EditPanel";
+import { useEditable } from "@/components/editable/context";
 import type { HomeContent, BlogPost } from "@/lib/cms";
 
 export default function BlogPreview({
   blogPreviewSection,
   posts,
 }: {
-  blogPreviewSection: Pick<HomeContent["blogPreviewSection"], "heading" | "subheading" | "ctaText" | "ctaLabel" | "readMoreLabel">;
+  blogPreviewSection: Pick<
+    HomeContent["blogPreviewSection"],
+    "heading" | "subheading" | "ctaText" | "ctaLabel" | "ctaHref" | "readMoreLabel"
+  >;
   posts: BlogPost[];
 }) {
+  const ctx = useEditable();
+  const ctaHref = (ctx?.get("blogPreviewSection.ctaHref") as string | undefined) ?? blogPreviewSection.ctaHref;
+
   return (
     <section className="bg-cream-alt px-4 py-20 sm:px-6 md:py-28">
       <div className="mx-auto max-w-5xl">
@@ -30,7 +39,7 @@ export default function BlogPreview({
           {posts.map((post, i) => (
             <Reveal key={post.id} delay={i * 100}>
               <Link
-                href="/blog"
+                href={ctaHref}
                 className="hairline shadow-premium block h-full rounded-2xl bg-white p-7 transition-transform duration-500 ease-out hover:-translate-y-1.5"
               >
                 <h3 className="font-display text-xl text-navy">{post.title}</h3>
@@ -48,18 +57,19 @@ export default function BlogPreview({
             <p className="mb-5 text-base text-muted-light">
               <Field path="blogPreviewSection.ctaText" value={blogPreviewSection.ctaText} />
             </p>
-            <Link href="/blog" className="btn-outline-navy tap-target inline-block rounded-full px-9 py-3.5 text-[13px]">
+            <Link href={ctaHref} className="btn-outline-navy tap-target inline-block rounded-full px-9 py-3.5 text-[13px]">
               <Field path="blogPreviewSection.ctaLabel" value={blogPreviewSection.ctaLabel} />
             </Link>
           </div>
         </Reveal>
 
-        <EditPanel title="Blog card link text">
+        <EditPanel title="Blog card link text & destination">
           <EditInput
             path="blogPreviewSection.readMoreLabel"
             label={'"Read More" label'}
             value={blogPreviewSection.readMoreLabel}
           />
+          <EditInput path="blogPreviewSection.ctaHref" label="Link destination (both cards & button)" value={blogPreviewSection.ctaHref} />
         </EditPanel>
       </div>
     </section>

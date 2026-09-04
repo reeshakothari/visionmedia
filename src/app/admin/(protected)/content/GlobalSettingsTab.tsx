@@ -75,14 +75,45 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
       </div>
 
       <div>
-        <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Navigation</h2>
-        <p className="mt-1 text-xs text-muted-light">Menu link destinations stay the same — only the label text can be changed here.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Navigation Menu</h2>
+        <p className="mt-1 text-xs text-muted-light">Both the label and where it links to can be changed.</p>
+        <div className="mt-4 space-y-3">
           {global.navLinks.map((link, i) => (
-            <TextField key={i} path={`navLinks.${i}.label`} label={link.href} defaultValue={link.label} />
+            <div key={i} className="grid grid-cols-2 gap-3">
+              <TextField path={`navLinks.${i}.label`} label={`Link ${i + 1} label`} defaultValue={link.label} />
+              <TextField path={`navLinks.${i}.href`} label={`Link ${i + 1} destination`} defaultValue={link.href} />
+            </div>
           ))}
-          <TextField path="headerFooter.navCtaLabel" label="Call button" defaultValue={global.headerFooter.navCtaLabel} />
         </div>
+        <div className="mt-4">
+          <TextField path="headerFooter.navCtaLabel" label="Call button text" defaultValue={global.headerFooter.navCtaLabel} />
+        </div>
+      </div>
+
+      <div>
+        <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-navy">Footer Quick Links</h2>
+        <p className="mt-1 text-xs text-muted-light">
+          Shown at the bottom of every page — the exact set differs slightly between the Home page, the service pages, and the Blog page.
+        </p>
+        {(
+          [
+            { key: "footerLinksHome", label: "Home page footer", links: global.footerLinksHome },
+            { key: "footerLinksStandard", label: "Wedding / Corporate / Venues / Social footer", links: global.footerLinksStandard },
+            { key: "footerLinksBlog", label: "Blog page footer", links: global.footerLinksBlog },
+          ] as const
+        ).map((group) => (
+          <div key={group.key} className="mt-5">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-light">{group.label}</p>
+            <div className="space-y-3">
+              {group.links.map((link, i) => (
+                <div key={i} className="grid grid-cols-2 gap-3">
+                  <TextField path={`${group.key}.${i}.label`} label={`Link ${i + 1} label`} defaultValue={link.label} />
+                  <TextField path={`${group.key}.${i}.href`} label={`Link ${i + 1} destination`} defaultValue={link.href} />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div>

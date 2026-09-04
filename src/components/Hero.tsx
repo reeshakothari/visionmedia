@@ -5,6 +5,8 @@ import { useRef } from "react";
 import type { HomeContent } from "@/lib/cms";
 import { Field } from "@/components/editable/Field";
 import { EditableImage } from "@/components/editable/EditableImage";
+import { EditPanel, EditInput } from "@/components/editable/EditPanel";
+import { useEditable } from "@/components/editable/context";
 
 const tileClasses = [
   "col-span-2 row-span-2",
@@ -18,6 +20,9 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [0, 60]);
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0.35]);
+  const ctx = useEditable();
+  const primaryHref = (ctx?.get("hero.primaryCta.href") as string | undefined) ?? hero.primaryCta.href;
+  const secondaryHref = (ctx?.get("hero.secondaryCta.href") as string | undefined) ?? hero.secondaryCta.href;
 
   return (
     <section id="home" ref={ref} className="bg-noise relative overflow-hidden bg-navy px-4 pb-16 pt-12 sm:px-6 md:pb-28 md:pt-20">
@@ -46,13 +51,13 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
 
           <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row md:items-start">
             <a
-              href={hero.primaryCta.href}
+              href={primaryHref}
               className="btn-gold tap-target inline-flex w-full items-center justify-center rounded-full px-9 py-3.5 text-[13px] sm:w-auto"
             >
               <Field path="hero.primaryCta.label" value={hero.primaryCta.label} />
             </a>
             <a
-              href={hero.secondaryCta.href}
+              href={secondaryHref}
               className="btn-outline-gold tap-target inline-flex w-full items-center justify-center rounded-full px-9 py-3.5 text-[13px] sm:w-auto"
             >
               <Field path="hero.secondaryCta.label" value={hero.secondaryCta.label} />
@@ -88,6 +93,11 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
           </div>
         </motion.div>
       </div>
+
+      <EditPanel title="Hero button destinations">
+        <EditInput path="hero.primaryCta.href" label="Primary button link" value={hero.primaryCta.href} />
+        <EditInput path="hero.secondaryCta.href" label="Secondary button link" value={hero.secondaryCta.href} />
+      </EditPanel>
     </section>
   );
 }

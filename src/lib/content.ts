@@ -218,6 +218,7 @@ export const gallerySection = {
   ],
   ctaText: "Want to see more of our work?",
   ctaLabel: "Contact Us for More",
+  ctaHref: "#contact",
 };
 
 export const reviewsSection = {
@@ -257,6 +258,7 @@ export const blogPreviewSection = {
   ],
   ctaText: "Read more tips and stories on our blog",
   ctaLabel: "Visit Blog",
+  ctaHref: "/blog",
   readMoreLabel: "Read More →",
 };
 
