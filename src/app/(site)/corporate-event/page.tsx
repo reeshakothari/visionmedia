@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import PageHero from "@/components/PageHero";
 import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import WhySection from "@/components/WhySection";
+import ClientsSection from "@/components/ClientsSection";
 import Gallery from "@/components/Gallery";
 import ContactSection from "@/components/ContactSection";
-import { getContent, getGalleryImages, type CorporateContent } from "@/lib/cms";
+import { getContent, getGalleryImages, getClients, type CorporateContent } from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
@@ -15,9 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function CorporateEventPage() {
-  const [corporatePage, galleryItems] = await Promise.all([
+  const [corporatePage, galleryItems, clients] = await Promise.all([
     getContent<CorporateContent>("corporate-event"),
     getGalleryImages("corporate-event", { onlyPublished: true }),
+    getClients({ onlyPublished: true }),
   ]);
 
   return (
@@ -34,6 +36,7 @@ export default async function CorporateEventPage() {
         features={corporatePage.whyFeatures}
         stats={corporatePage.stats}
       />
+      <ClientsSection heading={corporatePage.clientsHeading} subheading={corporatePage.clientsSubheading} clients={clients} />
       <Gallery heading={corporatePage.galleryHeading} subheading={corporatePage.gallerySubheading} items={galleryItems} />
       <ContactSection
         basePath="contact"

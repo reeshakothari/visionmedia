@@ -402,6 +402,8 @@ export const corporatePage = {
     { number: "99%", label: "Success Rate" },
     { number: "24/7", label: "Support Available" },
   ],
+  clientsHeading: "Our Clients",
+  clientsSubheading: "Trusted by leading brands and organizations across industries",
   galleryHeading: "Corporate Event Gallery",
   gallerySubheading: "Explore our portfolio of successful corporate events and business celebrations",
   gallery: [

@@ -12,6 +12,7 @@ import PageHero from "@/components/PageHero";
 import ServiceDetailGrid from "@/components/ServiceDetailGrid";
 import JourneySteps from "@/components/JourneySteps";
 import WhySection from "@/components/WhySection";
+import ClientsSection from "@/components/ClientsSection";
 import { EditableProvider, useEditable } from "@/components/editable/context";
 import { Field } from "@/components/editable/Field";
 import { saveDraftAction, publishPageAction, discardDraftAction } from "@/lib/actions";
@@ -19,6 +20,7 @@ import GlobalSettingsTab from "./GlobalSettingsTab";
 import GalleryManager from "./GalleryManager";
 import TestimonialsManager from "./TestimonialsManager";
 import BlogPostsManager from "./BlogPostsManager";
+import ClientsManager from "./ClientsManager";
 import type {
   PageKey,
   HomeContent,
@@ -31,6 +33,7 @@ import type {
   GalleryImage,
   Testimonial,
   BlogPost,
+  Client,
 } from "@/lib/cms";
 
 const PAGE_TABS: { key: PageKey; label: string }[] = [
@@ -47,6 +50,7 @@ const LIST_TABS = [
   { key: "gallery", label: "Photo Gallery" },
   { key: "reviews", label: "Reviews" },
   { key: "blogposts", label: "Blog Posts" },
+  { key: "clients", label: "Clients" },
 ] as const;
 
 type ListTabKey = (typeof LIST_TABS)[number]["key"];
@@ -67,11 +71,13 @@ export default function ContentEditor({
   initialGalleryImages,
   initialTestimonials,
   initialBlogPosts,
+  initialClients,
 }: {
   initialDrafts: Drafts;
   initialGalleryImages: GalleryImage[];
   initialTestimonials: Testimonial[];
   initialBlogPosts: BlogPost[];
+  initialClients: Client[];
 }) {
   const [activeTab, setActiveTab] = useState<TabKey>("home");
 
@@ -119,6 +125,7 @@ export default function ContentEditor({
               galleryImages={initialGalleryImages.filter((g) => g.page === tab.key)}
               testimonials={initialTestimonials}
               blogPosts={initialBlogPosts}
+              clients={initialClients}
             />
           </EditableProvider>
         </div>
@@ -127,6 +134,7 @@ export default function ContentEditor({
       {activeTab === "gallery" && <GalleryManager initialImages={initialGalleryImages} />}
       {activeTab === "reviews" && <TestimonialsManager initialTestimonials={initialTestimonials} />}
       {activeTab === "blogposts" && <BlogPostsManager initialPosts={initialBlogPosts} />}
+      {activeTab === "clients" && <ClientsManager initialClients={initialClients} />}
     </div>
   );
 }
@@ -178,12 +186,14 @@ function PagePreview({
   galleryImages,
   testimonials,
   blogPosts,
+  clients,
 }: {
   pageKey: PageKey;
   content: Drafts[PageKey];
   galleryImages: GalleryImage[];
   testimonials: Testimonial[];
   blogPosts: BlogPost[];
+  clients: Client[];
 }) {
   if (pageKey === "home") {
     const c = content as HomeContent;
@@ -295,6 +305,9 @@ function PagePreview({
         <JourneySteps heading={c.journeyHeading} subheading={c.journeySubheading} steps={c.journey} />
       ) : (
         <WhySection heading={c.whyHeading} subheading={c.whySubheading} features={c.whyFeatures} stats={c.stats} />
+      )}
+      {pageKey === "corporate-event" && "clientsHeading" in c && (
+        <ClientsSection heading={c.clientsHeading} subheading={c.clientsSubheading} clients={clients} />
       )}
       <Gallery heading={c.galleryHeading} subheading={c.gallerySubheading} items={galleryImages} />
       <ContactSection

@@ -3,6 +3,7 @@ import {
   getAllGalleryImages,
   getTestimonials,
   getBlogPosts,
+  getClients,
   type HomeContent,
   type WeddingContent,
   type CorporateContent,
@@ -16,7 +17,7 @@ import ContentEditor from "./ContentEditor";
 export const dynamic = "force-dynamic";
 
 export default async function AdminContentPage() {
-  const [home, wedding, corporateEvent, weddingVenues, socialEvents, blog, global, galleryImages, testimonials, blogPosts] =
+  const [home, wedding, corporateEvent, weddingVenues, socialEvents, blog, global, galleryImages, testimonials, blogPosts, clients] =
     await Promise.all([
       getDraft<HomeContent>("home"),
       getDraft<WeddingContent>("wedding"),
@@ -28,6 +29,7 @@ export default async function AdminContentPage() {
       getAllGalleryImages(),
       getTestimonials(),
       getBlogPosts(),
+      getClients(),
     ]);
 
   return (
@@ -44,6 +46,7 @@ export default async function AdminContentPage() {
       initialGalleryImages={galleryImages}
       initialTestimonials={testimonials}
       initialBlogPosts={blogPosts}
+      initialClients={clients}
     />
   );
 }

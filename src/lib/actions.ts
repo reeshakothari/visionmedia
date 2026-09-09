@@ -99,6 +99,30 @@ export async function reorderTestimonialsAction(orderedIds: string[]) {
 }
 
 // ---------------------------------------------------------------------------
+// Clients (Corporate Event page logos)
+// ---------------------------------------------------------------------------
+
+export async function addClientAction(input: { name: string; logo: string }) {
+  await cms.addClient(input);
+  revalidateForPage("corporate-event");
+}
+
+export async function updateClientAction(id: string, patch: Partial<cms.Client>) {
+  await cms.updateClient(id, patch);
+  revalidateForPage("corporate-event");
+}
+
+export async function deleteClientAction(id: string) {
+  await cms.deleteClient(id);
+  revalidateForPage("corporate-event");
+}
+
+export async function reorderClientsAction(orderedIds: string[]) {
+  await cms.reorderClients(orderedIds);
+  revalidateForPage("corporate-event");
+}
+
+// ---------------------------------------------------------------------------
 // Blog posts
 // ---------------------------------------------------------------------------
 

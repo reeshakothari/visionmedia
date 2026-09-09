@@ -261,6 +261,52 @@ export async function reorderTestimonials(orderedIds: string[]) {
 }
 
 // ---------------------------------------------------------------------------
+// Clients — logos shown on the Corporate Event page
+// ---------------------------------------------------------------------------
+
+export type Client = {
+  id: string;
+  name: string;
+  logo: string;
+  sort_order: number;
+  is_published: boolean;
+  created_at: string;
+};
+
+export async function getClients(opts: { onlyPublished?: boolean } = {}) {
+  let q = supabase.from("vision_media_clients").select("*").order("sort_order", { ascending: true });
+  if (opts.onlyPublished) q = q.eq("is_published", true);
+  const { data, error } = await q;
+  if (error) throw error;
+  return (data ?? []) as Client[];
+}
+
+export async function addClient(input: { name: string; logo: string }) {
+  const { data: existing } = await supabase
+    .from("vision_media_clients")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1);
+  const nextOrder = ((existing?.[0] as { sort_order?: number } | undefined)?.sort_order ?? -1) + 1;
+  const { error } = await supabase.from("vision_media_clients").insert({ ...input, sort_order: nextOrder });
+  if (error) throw error;
+}
+
+export async function updateClient(id: string, patch: Partial<Client>) {
+  const { error } = await supabase.from("vision_media_clients").update(patch).eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteClient(id: string) {
+  const { error } = await supabase.from("vision_media_clients").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function reorderClients(orderedIds: string[]) {
+  await Promise.all(orderedIds.map((id, i) => supabase.from("vision_media_clients").update({ sort_order: i }).eq("id", id)));
+}
+
+// ---------------------------------------------------------------------------
 // Blog posts
 // ---------------------------------------------------------------------------
 

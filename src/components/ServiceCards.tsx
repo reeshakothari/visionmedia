@@ -94,7 +94,7 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
         tabIndex={0}
         aria-pressed={flipped}
         aria-label={`${card.frontTitle} — press to see details`}
-        className="group relative h-[380px] cursor-pointer [perspective:1400px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-dark focus-visible:ring-offset-2 sm:h-[440px]"
+        className="group relative h-[430px] cursor-pointer [perspective:1400px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-dark focus-visible:ring-offset-2 sm:h-[460px] lg:h-[520px]"
         onClick={() => setFlipped((v) => !v)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -135,17 +135,17 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
           </div>
 
           {/* Back */}
-          <div className="shadow-premium hairline absolute inset-0 flex flex-col justify-between overflow-y-auto rounded-2xl bg-cream p-6 text-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <div className="shadow-premium hairline absolute inset-0 flex flex-col justify-between overflow-y-auto rounded-2xl bg-cream p-5 text-center [backface-visibility:hidden] [transform:rotateY(180deg)]">
             <div>
-              <h3 className="font-display text-xl text-navy">
+              <h3 className="font-display text-lg text-navy sm:text-xl">
                 <Field path={`${base}.backTitle`} value={card.backTitle} />
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
+              <p className="mt-1.5 text-[13px] leading-snug text-muted">
                 <Field path={`${base}.backText`} value={card.backText} />
               </p>
-              <ul className="mt-4 space-y-1.5 text-left">
+              <ul className="mt-3 space-y-1 text-left">
                 {card.items.map((item, j) => (
-                  <li key={j} className="flex items-start gap-1.5 text-xs font-medium text-navy/70 sm:text-[13px]">
+                  <li key={j} className="flex items-start gap-1.5 text-xs font-medium leading-snug text-navy/70">
                     <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-gold-dark" aria-hidden />
                     <Field path={`${base}.items.${j}`} value={item} />
                   </li>
@@ -153,7 +153,7 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
               </ul>
             </div>
             <div>
-              <p className="badge badge-gold mb-4">
+              <p className="badge badge-gold mb-3">
                 <Field path={`${base}.rating`} value={card.rating} />
               </p>
               <Link

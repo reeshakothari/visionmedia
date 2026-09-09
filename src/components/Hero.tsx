@@ -8,13 +8,6 @@ import { EditableImage } from "@/components/editable/EditableImage";
 import { EditPanel, EditInput } from "@/components/editable/EditPanel";
 import { useEditable } from "@/components/editable/context";
 
-const tileClasses = [
-  "col-span-2 row-span-2",
-  "col-span-1 row-span-1 md:col-span-2 md:row-span-1",
-  "col-span-1 row-span-1",
-  "col-span-2 row-span-1 md:col-span-1",
-];
-
 export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -66,14 +59,14 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
         </motion.div>
 
         <motion.div style={{ y, opacity }} className="order-2 mt-8 md:mt-0">
-          <div className="grid h-[360px] grid-cols-2 grid-rows-4 grid-flow-dense gap-2.5 sm:h-[420px] md:h-[480px] md:grid-cols-4 md:grid-rows-2 md:gap-3">
+          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             {hero.images.map((img, i) => (
               <motion.div
                 key={img.title}
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className={`group hairline-light relative overflow-hidden rounded-xl shadow-premium-lg ${tileClasses[i]}`}
+                className="group hairline-light relative aspect-square overflow-hidden rounded-xl shadow-premium-lg"
               >
                 <EditableImage
                   path={`hero.images.${i}.src`}
