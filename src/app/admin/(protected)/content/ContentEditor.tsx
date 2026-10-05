@@ -120,7 +120,7 @@ export default function ContentEditor({
       </div>
 
       {PAGE_TABS.map((tab) => (
-        <div key={tab.key} hidden={activeTab !== tab.key}>
+        <div key={tab.key} data-tab={tab.key} hidden={activeTab !== tab.key}>
           <EditableProvider
             page={tab.key}
             initialDraft={initialDrafts[tab.key]}

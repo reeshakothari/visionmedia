@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useEditable } from "@/components/editable/context";
 import { uploadImageAction } from "@/lib/actions";
+import { checkUploadSize } from "@/lib/upload";
 import type { GlobalContent } from "@/lib/cms";
 
 function TextField({ path, label, defaultValue }: { path: string; label: string; defaultValue: string }) {
@@ -25,9 +26,15 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
   const ctx = useEditable()!;
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [justPublished, setJustPublished] = useState(false);
   const logo = (ctx.get("siteInfo.logo") as string) ?? global.siteInfo.logo;
 
   async function handleLogoUpload(file: File) {
+    const sizeError = checkUploadSize(file);
+    if (sizeError) {
+      setUploadError(sizeError);
+      return;
+    }
     setUploading(true);
     setUploadError(null);
     try {
@@ -36,8 +43,13 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
       const result = await uploadImageAction(formData);
       // Logo goes live immediately, same as every other image in the editor
       // — see EditableImage.tsx for why images don't stage behind Publish.
-      if ("url" in result) await ctx.setAndPublish("siteInfo.logo", result.url);
-      else setUploadError(result.error);
+      if ("url" in result) {
+        await ctx.setAndPublish("siteInfo.logo", result.url);
+        setJustPublished(true);
+        setTimeout(() => setJustPublished(false), 3000);
+      } else {
+        setUploadError(result.error);
+      }
     } finally {
       setUploading(false);
     }
@@ -65,6 +77,7 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
               />
             </label>
             {uploading && <p className="mt-1 text-xs text-muted-light">Uploading…</p>}
+            {justPublished && <p className="mt-1 text-xs font-semibold text-emerald-600">✓ Live now</p>}
             {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
           </div>
         </div>
