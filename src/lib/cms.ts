@@ -2,6 +2,7 @@ import "server-only";
 import { supabase } from "./supabase";
 import * as content from "./content";
 import { PAGE_LABELS, ROUTE_FOR_PAGE, type PageKey } from "./pages";
+import { setPath } from "./path";
 
 export { PAGE_LABELS, ROUTE_FOR_PAGE, type PageKey };
 
@@ -158,6 +159,27 @@ export async function publishPage(page: PageKey) {
       updated_at: new Date().toISOString(),
       published_at: new Date().toISOString(),
     },
+    { onConflict: "page" }
+  );
+  if (error) throw error;
+}
+
+/**
+ * Writes a single field straight into both draft and published content and
+ * publishes immediately — used for image replacements. Unlike text edits
+ * (which stage in the draft until the admin clicks Publish), an image swap
+ * is a single atomic action with no reason to sit unpublished, and staging
+ * it was the direct cause of images appearing to "not work": the upload
+ * would save correctly but never go live until a separate click the admin
+ * didn't know to make. Any *other* unrelated pending text edits on the page
+ * are left untouched in the draft, still waiting on their own Publish.
+ */
+export async function publishField(page: PageKey, path: string, value: unknown) {
+  const row = await fetchRow(page);
+  const draft = setPath(mergeWithDefaults(page, row?.draft), path, value);
+  const published = setPath(mergeWithDefaults(page, row?.content), path, value);
+  const { error } = await supabase.from("vision_media_site_content").upsert(
+    { page, content: published, draft, updated_at: new Date().toISOString(), published_at: new Date().toISOString() },
     { onConflict: "page" }
   );
   if (error) throw error;

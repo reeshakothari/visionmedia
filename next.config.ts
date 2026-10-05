@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      // Default is 1MB, which silently rejects most real phone photos (event
+      // photography easily runs 3-10MB). Image uploads in the admin editor
+      // go through a Server Action, so this limit applies to them directly.
+      bodySizeLimit: "20mb",
+    },
+  },
 };
 
 export default nextConfig;

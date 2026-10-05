@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { uploadImageAction } from "@/lib/actions";
+import { checkUploadSize } from "@/lib/upload";
 
 export type FieldConfig = { name: string; label: string; type: "text" | "textarea" | "image" };
 
@@ -34,6 +35,7 @@ export function ListManager<T extends Item>({
   const [draft, setDraft] = useState<Record<string, string>>(emptyDefaults);
   const [adding, setAdding] = useState(false);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
+  const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
 
   async function handleAdd() {
     setAdding(true);
@@ -69,13 +71,23 @@ export function ListManager<T extends Item>({
     await reorderAction(next.map((it) => it.id));
   }
 
-  async function handleUpload(field: string, file: File, setter: (url: string) => void) {
-    setUploadingField(field);
+  async function handleUpload(key: string, file: File, setter: (url: string) => void) {
+    setUploadingField(key);
+    setUploadErrors((prev) => ({ ...prev, [key]: "" }));
+    const sizeError = checkUploadSize(file);
+    if (sizeError) {
+      setUploadErrors((prev) => ({ ...prev, [key]: sizeError }));
+      setUploadingField(null);
+      return;
+    }
     try {
       const formData = new FormData();
       formData.append("file", file);
       const result = await uploadImageAction(formData);
       if ("url" in result) setter(result.url);
+      else setUploadErrors((prev) => ({ ...prev, [key]: result.error }));
+    } catch {
+      setUploadErrors((prev) => ({ ...prev, [key]: "Upload failed" }));
     } finally {
       setUploadingField(null);
     }
@@ -98,12 +110,9 @@ export function ListManager<T extends Item>({
                       <ImageField
                         value={String(item[f.name] ?? "")}
                         uploading={uploadingField === `${item.id}-${f.name}`}
+                        error={uploadErrors[`${item.id}-${f.name}`]}
                         onFile={(file) => {
-                          setUploadingField(`${item.id}-${f.name}`);
-                          handleUpload(f.name, file, (url) => {
-                            handleUpdate(item.id, f.name, url);
-                            setUploadingField(null);
-                          });
+                          handleUpload(`${item.id}-${f.name}`, file, (url) => handleUpdate(item.id, f.name, url));
                         }}
                       />
                     ) : f.type === "textarea" ? (
@@ -167,12 +176,9 @@ export function ListManager<T extends Item>({
                 <ImageField
                   value={draft[f.name] ?? ""}
                   uploading={uploadingField === `new-${f.name}`}
+                  error={uploadErrors[`new-${f.name}`]}
                   onFile={(file) => {
-                    setUploadingField(`new-${f.name}`);
-                    handleUpload(f.name, file, (url) => {
-                      setDraft((d) => ({ ...d, [f.name]: url }));
-                      setUploadingField(null);
-                    });
+                    handleUpload(`new-${f.name}`, file, (url) => setDraft((d) => ({ ...d, [f.name]: url })));
                   }}
                 />
               ) : f.type === "textarea" ? (
@@ -205,24 +211,37 @@ export function ListManager<T extends Item>({
   );
 }
 
-function ImageField({ value, uploading, onFile }: { value: string; uploading: boolean; onFile: (file: File) => void }) {
+function ImageField({
+  value,
+  uploading,
+  error,
+  onFile,
+}: {
+  value: string;
+  uploading: boolean;
+  error?: string;
+  onFile: (file: File) => void;
+}) {
   return (
-    <label className="group relative flex h-20 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-navy/25 bg-white text-[10px] text-muted-light">
-      {value ? (
-        <Image src={value} alt="" fill className="object-cover" />
-      ) : (
-        <span>{uploading ? "Uploading…" : "Upload"}</span>
-      )}
-      {value && uploading && <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-white">Uploading…</span>}
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) onFile(file);
-        }}
-      />
-    </label>
+    <div>
+      <label className="group relative flex h-20 w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed border-navy/25 bg-white text-[10px] text-muted-light">
+        {value ? (
+          <Image src={value} alt="" fill className="object-cover" />
+        ) : (
+          <span>{uploading ? "Uploading…" : "Upload"}</span>
+        )}
+        {value && uploading && <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-white">Uploading…</span>}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) onFile(file);
+          }}
+        />
+      </label>
+      {error && <p className="mt-1 max-w-[6.5rem] text-[10px] leading-snug text-red-600">{error}</p>}
+    </div>
   );
 }

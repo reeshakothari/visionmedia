@@ -9,6 +9,10 @@ type EditableContextValue = {
   editing: boolean;
   get: (path: string) => unknown;
   set: (path: string, value: unknown) => void;
+  /** Writes a field straight to both draft and published content, live
+   * immediately — used for image replacements, which shouldn't need a
+   * separate Publish click the way batched text edits do. */
+  setAndPublish: (path: string, value: unknown) => Promise<void>;
   status: SaveStatus;
   errorMessage: string | null;
   save: () => Promise<void>;
@@ -28,6 +32,7 @@ export function EditableProvider<T>({
   initiallyUnpublished = false,
   saveDraftAction,
   publishAction,
+  publishFieldAction,
   discardAction,
   children,
 }: {
@@ -40,6 +45,7 @@ export function EditableProvider<T>({
   initiallyUnpublished?: boolean;
   saveDraftAction: (page: string, draft: T) => Promise<void>;
   publishAction: (page: string) => Promise<void>;
+  publishFieldAction: (page: string, path: string, value: unknown) => Promise<void>;
   discardAction: (page: string) => Promise<T>;
   children: React.ReactNode;
 }) {
@@ -53,6 +59,25 @@ export function EditableProvider<T>({
     setDraft((d) => setPath(d, path, value));
     setStatus("dirty");
   }, []);
+
+  const setAndPublish = useCallback(
+    async (path: string, value: unknown) => {
+      setDraft((d) => setPath(d, path, value));
+      setErrorMessage(null);
+      try {
+        await publishFieldAction(page, path, value);
+        // Leave "dirty"/"saving" alone — there may be unrelated text edits
+        // still pending their own Publish click. Otherwise this field is
+        // now fully live, so clear any stale "unpublished" warning.
+        setStatus((s) => (s === "dirty" || s === "saving" ? s : "published"));
+      } catch (err) {
+        setErrorMessage(err instanceof Error ? err.message : "Failed to publish");
+        setStatus("error");
+        throw err;
+      }
+    },
+    [page, publishFieldAction]
+  );
 
   const save = useCallback(async () => {
     setStatus("saving");
@@ -108,7 +133,9 @@ export function EditableProvider<T>({
   }, [page, discardAction]);
 
   return (
-    <EditableContext.Provider value={{ editing: true, get, set, status, errorMessage, save, publish, discard }}>
+    <EditableContext.Provider
+      value={{ editing: true, get, set, setAndPublish, status, errorMessage, save, publish, discard }}
+    >
       {children}
     </EditableContext.Provider>
   );

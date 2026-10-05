@@ -24,15 +24,20 @@ function TextField({ path, label, defaultValue }: { path: string; label: string;
 export default function GlobalSettingsTab({ global }: { global: GlobalContent }) {
   const ctx = useEditable()!;
   const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const logo = (ctx.get("siteInfo.logo") as string) ?? global.siteInfo.logo;
 
   async function handleLogoUpload(file: File) {
     setUploading(true);
+    setUploadError(null);
     try {
       const formData = new FormData();
       formData.append("file", file);
       const result = await uploadImageAction(formData);
-      if ("url" in result) ctx.set("siteInfo.logo", result.url);
+      // Logo goes live immediately, same as every other image in the editor
+      // — see EditableImage.tsx for why images don't stage behind Publish.
+      if ("url" in result) await ctx.setAndPublish("siteInfo.logo", result.url);
+      else setUploadError(result.error);
     } finally {
       setUploading(false);
     }
@@ -60,6 +65,7 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
               />
             </label>
             {uploading && <p className="mt-1 text-xs text-muted-light">Uploading…</p>}
+            {uploadError && <p className="mt-1 text-xs text-red-600">{uploadError}</p>}
           </div>
         </div>
       </div>

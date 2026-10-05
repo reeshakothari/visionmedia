@@ -26,6 +26,11 @@ export async function discardDraftAction(page: string) {
   return cms.discardDraft(page as cms.PageKey);
 }
 
+export async function publishFieldAction(page: string, path: string, value: unknown) {
+  await cms.publishField(page as cms.PageKey, path, value);
+  revalidateForPage(page);
+}
+
 // ---------------------------------------------------------------------------
 // Image upload (Server Actions can receive File objects inside FormData)
 // ---------------------------------------------------------------------------

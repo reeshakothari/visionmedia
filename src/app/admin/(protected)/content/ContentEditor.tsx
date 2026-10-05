@@ -15,7 +15,7 @@ import WhySection from "@/components/WhySection";
 import ClientsSection from "@/components/ClientsSection";
 import { EditableProvider, useEditable } from "@/components/editable/context";
 import { Field } from "@/components/editable/Field";
-import { saveDraftAction, publishPageAction, discardDraftAction } from "@/lib/actions";
+import { saveDraftAction, publishPageAction, publishFieldAction, discardDraftAction } from "@/lib/actions";
 import GlobalSettingsTab from "./GlobalSettingsTab";
 import GalleryManager from "./GalleryManager";
 import TestimonialsManager from "./TestimonialsManager";
@@ -127,6 +127,7 @@ export default function ContentEditor({
             initiallyUnpublished={initialUnpublished[tab.key]}
             saveDraftAction={saveDraftAction}
             publishAction={publishPageAction}
+            publishFieldAction={publishFieldAction}
             discardAction={discardDraftAction}
           >
             <Toolbar pageLabel={tab.label} />
