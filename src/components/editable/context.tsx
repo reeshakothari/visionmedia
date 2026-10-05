@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { getPath, setPath } from "@/lib/path";
 
-export type SaveStatus = "idle" | "dirty" | "saving" | "saved" | "publishing" | "published" | "error";
+export type SaveStatus = "idle" | "unpublished" | "dirty" | "saving" | "saved" | "publishing" | "published" | "error";
 
 type EditableContextValue = {
   editing: boolean;
@@ -25,6 +25,7 @@ export function useEditable() {
 export function EditableProvider<T>({
   page,
   initialDraft,
+  initiallyUnpublished = false,
   saveDraftAction,
   publishAction,
   discardAction,
@@ -32,13 +33,18 @@ export function EditableProvider<T>({
 }: {
   page: string;
   initialDraft: T;
+  /** True when the saved draft already differs from what's published — e.g.
+   * someone uploaded an image or edited text in a previous visit and never
+   * clicked Publish. Without this, the toolbar would say "No changes" on
+   * load even though there's unpublished work waiting. */
+  initiallyUnpublished?: boolean;
   saveDraftAction: (page: string, draft: T) => Promise<void>;
   publishAction: (page: string) => Promise<void>;
   discardAction: (page: string) => Promise<T>;
   children: React.ReactNode;
 }) {
   const [draft, setDraft] = useState<T>(initialDraft);
-  const [status, setStatus] = useState<SaveStatus>("idle");
+  const [status, setStatus] = useState<SaveStatus>(initiallyUnpublished ? "unpublished" : "idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const get = useCallback((path: string) => getPath(draft, path), [draft]);

@@ -68,12 +68,14 @@ type Drafts = {
 
 export default function ContentEditor({
   initialDrafts,
+  initialUnpublished,
   initialGalleryImages,
   initialTestimonials,
   initialBlogPosts,
   initialClients,
 }: {
   initialDrafts: Drafts;
+  initialUnpublished: Record<PageKey, boolean>;
   initialGalleryImages: GalleryImage[];
   initialTestimonials: Testimonial[];
   initialBlogPosts: BlogPost[];
@@ -88,11 +90,19 @@ export default function ContentEditor({
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+            aria-label={initialUnpublished[tab.key] ? `${tab.label} (unpublished changes)` : undefined}
+            className={`relative shrink-0 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors ${
               activeTab === tab.key ? "bg-navy text-white" : "text-navy/60 hover:bg-navy/5"
             }`}
           >
             {tab.label}
+            {initialUnpublished[tab.key] && (
+              <span
+                className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500"
+                title="Unpublished changes"
+                aria-hidden="true"
+              />
+            )}
           </button>
         ))}
         <span className="mx-1 my-auto h-4 w-px shrink-0 bg-navy/10" />
@@ -114,6 +124,7 @@ export default function ContentEditor({
           <EditableProvider
             page={tab.key}
             initialDraft={initialDrafts[tab.key]}
+            initiallyUnpublished={initialUnpublished[tab.key]}
             saveDraftAction={saveDraftAction}
             publishAction={publishPageAction}
             discardAction={discardDraftAction}
@@ -152,17 +163,25 @@ function Toolbar({ pageLabel }: { pageLabel: string }) {
       ? "Unsaved changes"
       : ctx.status === "saved"
       ? "Draft saved"
+      : ctx.status === "unpublished"
+      ? "⚠ Unpublished changes from before — click Publish to go live"
       : ctx.status === "error"
       ? ctx.errorMessage ?? "Something went wrong"
       : "No changes";
 
+  const isUrgent = ctx.status === "unpublished" || ctx.status === "error";
+
   return (
-    <div className="sticky top-[41px] z-20 flex flex-wrap items-center justify-between gap-3 border-b border-gold/30 bg-cream-alt/95 px-4 py-2.5 backdrop-blur">
+    <div
+      className={`sticky top-[41px] z-20 flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5 backdrop-blur ${
+        ctx.status === "unpublished" ? "border-red-300 bg-red-50/95" : "border-gold/30 bg-cream-alt/95"
+      }`}
+    >
       <p className="text-xs text-navy/70">
         Editing <span className="font-semibold text-navy">{pageLabel}</span> — click any text or image below to change it.
       </p>
       <div className="flex items-center gap-3">
-        <span className={`text-xs font-medium ${ctx.status === "error" ? "text-red-600" : "text-navy/50"}`}>{label}</span>
+        <span className={`text-xs font-medium ${isUrgent ? "text-red-600" : "text-navy/50"}`}>{label}</span>
         <button
           onClick={() => ctx.discard()}
           className="rounded-full border border-navy/20 px-4 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-navy/5"

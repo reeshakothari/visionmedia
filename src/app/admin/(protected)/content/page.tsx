@@ -1,5 +1,5 @@
 import {
-  getDraft,
+  getDraftWithStatus,
   getAllGalleryImages,
   getTestimonials,
   getBlogPosts,
@@ -19,13 +19,13 @@ export const dynamic = "force-dynamic";
 export default async function AdminContentPage() {
   const [home, wedding, corporateEvent, weddingVenues, socialEvents, blog, global, galleryImages, testimonials, blogPosts, clients] =
     await Promise.all([
-      getDraft<HomeContent>("home"),
-      getDraft<WeddingContent>("wedding"),
-      getDraft<CorporateContent>("corporate-event"),
-      getDraft<VenuesContent>("wedding-venues"),
-      getDraft<SocialContent>("social-events"),
-      getDraft<BlogContent>("blog"),
-      getDraft<GlobalContent>("global"),
+      getDraftWithStatus<HomeContent>("home"),
+      getDraftWithStatus<WeddingContent>("wedding"),
+      getDraftWithStatus<CorporateContent>("corporate-event"),
+      getDraftWithStatus<VenuesContent>("wedding-venues"),
+      getDraftWithStatus<SocialContent>("social-events"),
+      getDraftWithStatus<BlogContent>("blog"),
+      getDraftWithStatus<GlobalContent>("global"),
       getAllGalleryImages(),
       getTestimonials(),
       getBlogPosts(),
@@ -35,13 +35,22 @@ export default async function AdminContentPage() {
   return (
     <ContentEditor
       initialDrafts={{
-        home,
-        wedding,
-        "corporate-event": corporateEvent,
-        "wedding-venues": weddingVenues,
-        "social-events": socialEvents,
-        blog,
-        global,
+        home: home.draft,
+        wedding: wedding.draft,
+        "corporate-event": corporateEvent.draft,
+        "wedding-venues": weddingVenues.draft,
+        "social-events": socialEvents.draft,
+        blog: blog.draft,
+        global: global.draft,
+      }}
+      initialUnpublished={{
+        home: home.hasUnpublishedChanges,
+        wedding: wedding.hasUnpublishedChanges,
+        "corporate-event": corporateEvent.hasUnpublishedChanges,
+        "wedding-venues": weddingVenues.hasUnpublishedChanges,
+        "social-events": socialEvents.hasUnpublishedChanges,
+        blog: blog.hasUnpublishedChanges,
+        global: global.hasUnpublishedChanges,
       }}
       initialGalleryImages={galleryImages}
       initialTestimonials={testimonials}

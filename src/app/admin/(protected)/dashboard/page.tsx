@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Inbox, FileEdit, TrendingUp, Clock } from "lucide-react";
-import { getSubmissions, type Submission } from "@/lib/cms";
+import { Inbox, FileEdit, TrendingUp, Clock, AlertTriangle } from "lucide-react";
+import { getSubmissions, getPagesWithUnpublishedChanges, PAGE_LABELS, type Submission } from "@/lib/cms";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ const FORM_TYPE_LABELS: Record<string, string> = {
 };
 
 export default async function AdminDashboardPage() {
-  const submissions = await getSubmissions();
+  const [submissions, unpublishedPages] = await Promise.all([getSubmissions(), getPagesWithUnpublishedChanges()]);
 
   const thisWeek = countThisWeek(submissions);
   const newCount = submissions.filter((s) => s.status === "new").length;
@@ -33,6 +33,20 @@ export default async function AdminDashboardPage() {
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:py-10">
       <h1 className="font-display text-2xl text-navy sm:text-3xl">Dashboard</h1>
       <p className="mt-1 text-sm text-muted-light">An overview of enquiries and quick links to manage your site.</p>
+
+      {unpublishedPages.length > 0 && (
+        <Link
+          href="/admin/content"
+          className="mt-6 flex items-center gap-3 rounded-2xl border border-red-300 bg-red-50 p-4 transition-colors hover:bg-red-100"
+        >
+          <AlertTriangle className="h-5 w-5 shrink-0 text-red-600" aria-hidden />
+          <p className="text-sm text-red-700">
+            <span className="font-semibold">Unpublished changes</span> waiting on{" "}
+            {unpublishedPages.map((p) => PAGE_LABELS[p]).join(", ")} — edits were saved but never published, so they
+            aren&apos;t live yet. Click to open the editor and publish them.
+          </p>
+        </Link>
+      )}
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard icon={Inbox} label="Total Enquiries" value={submissions.length} />

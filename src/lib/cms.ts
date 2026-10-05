@@ -115,6 +115,31 @@ export async function getDraft<T = Record<string, unknown>>(page: PageKey): Prom
   return mergeWithDefaults(page, row?.draft) as T;
 }
 
+/**
+ * Like getDraft, but also reports whether that draft already differs from
+ * what's published — i.e. there's unpublished work sitting from a previous
+ * session. The editor uses this to show "unpublished changes" immediately on
+ * load instead of silently looking clean until something is edited again.
+ */
+export async function getDraftWithStatus<T = Record<string, unknown>>(
+  page: PageKey
+): Promise<{ draft: T; hasUnpublishedChanges: boolean }> {
+  const row = await fetchRow(page);
+  const draft = mergeWithDefaults(page, row?.draft);
+  const content = mergeWithDefaults(page, row?.content);
+  return { draft: draft as T, hasUnpublishedChanges: JSON.stringify(draft) !== JSON.stringify(content) };
+}
+
+/** Which pages currently have a saved draft that differs from what's
+ * published. Used for the dashboard's "unpublished changes" reminder. */
+export async function getPagesWithUnpublishedChanges(): Promise<PageKey[]> {
+  const { data, error } = await supabase.from("vision_media_site_content").select("page, content, draft");
+  if (error) throw error;
+  return (data ?? [])
+    .filter((row) => JSON.stringify(row.content) !== JSON.stringify(row.draft))
+    .map((row) => row.page as PageKey);
+}
+
 export async function saveDraft(page: PageKey, draft: unknown) {
   const { error } = await supabase
     .from("vision_media_site_content")
