@@ -224,6 +224,7 @@ function PagePreview({
         <AboutSection aboutSection={c.aboutSection} />
         <Gallery
           id="gallery"
+          page="home"
           heading={c.gallerySection.heading}
           subheading={c.gallerySection.subheading}
           headingPath="gallerySection.heading"
@@ -329,7 +330,7 @@ function PagePreview({
       {pageKey === "corporate-event" && "clientsHeading" in c && (
         <ClientsSection heading={c.clientsHeading} subheading={c.clientsSubheading} clients={clients} />
       )}
-      <Gallery heading={c.galleryHeading} subheading={c.gallerySubheading} items={galleryImages} />
+      <Gallery page={pageKey} heading={c.galleryHeading} subheading={c.gallerySubheading} items={galleryImages} />
       <ContactSection
         basePath="contact"
         formType={pageKey}

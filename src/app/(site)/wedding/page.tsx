@@ -29,7 +29,7 @@ export default async function WeddingPage() {
         services={weddingPage.services}
       />
       <JourneySteps heading={weddingPage.journeyHeading} subheading={weddingPage.journeySubheading} steps={weddingPage.journey} />
-      <Gallery heading={weddingPage.galleryHeading} subheading={weddingPage.gallerySubheading} items={galleryItems} />
+      <Gallery page="wedding" heading={weddingPage.galleryHeading} subheading={weddingPage.gallerySubheading} items={galleryItems} />
       <ContactSection
         basePath="contact"
         formType="wedding"

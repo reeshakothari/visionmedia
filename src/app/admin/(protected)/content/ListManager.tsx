@@ -26,7 +26,7 @@ export function ListManager<T extends Item>({
   items: T[];
   fields: FieldConfig[];
   emptyDefaults: Record<string, string>;
-  createAction: (input: Record<string, string>) => Promise<void>;
+  createAction: (input: Record<string, string>) => Promise<T>;
   updateAction: (id: string, patch: Record<string, string>) => Promise<void>;
   deleteAction: (id: string) => Promise<void>;
   reorderAction: (orderedIds: string[]) => Promise<void>;
@@ -40,11 +40,8 @@ export function ListManager<T extends Item>({
   async function handleAdd() {
     setAdding(true);
     try {
-      await createAction(draft);
-      setItems((prev) => [
-        ...prev,
-        { ...(draft as unknown as T), id: `temp-${Date.now()}`, sort_order: prev.length } as T,
-      ]);
+      const created = await createAction(draft);
+      setItems((prev) => [...prev, created]);
       setDraft(emptyDefaults);
     } finally {
       setAdding(false);

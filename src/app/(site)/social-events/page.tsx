@@ -29,7 +29,7 @@ export default async function SocialEventsPage() {
         services={socialPage.services}
       />
       <JourneySteps heading={socialPage.journeyHeading} subheading={socialPage.journeySubheading} steps={socialPage.journey} />
-      <Gallery heading={socialPage.galleryHeading} subheading={socialPage.gallerySubheading} items={galleryItems} />
+      <Gallery page="social-events" heading={socialPage.galleryHeading} subheading={socialPage.gallerySubheading} items={galleryItems} />
       <ContactSection
         basePath="contact"
         formType="social-events"

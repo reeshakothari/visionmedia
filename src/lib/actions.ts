@@ -60,8 +60,9 @@ export async function addGalleryImageAction(
   page: string,
   input: { src: string; alt: string; title: string; caption: string }
 ) {
-  await cms.addGalleryImage({ page, ...input });
+  const created = await cms.addGalleryImage({ page, ...input });
   revalidateForPage(page);
+  return created;
 }
 
 export async function updateGalleryImageAction(id: string, page: string, patch: Partial<cms.GalleryImage>) {
@@ -84,8 +85,9 @@ export async function reorderGalleryImagesAction(page: string, orderedIds: strin
 // ---------------------------------------------------------------------------
 
 export async function addTestimonialAction(input: { quote: string; author: string; role: string }) {
-  await cms.addTestimonial(input);
+  const created = await cms.addTestimonial(input);
   revalidateForPage("home");
+  return created;
 }
 
 export async function updateTestimonialAction(id: string, patch: Partial<cms.Testimonial>) {
@@ -108,8 +110,9 @@ export async function reorderTestimonialsAction(orderedIds: string[]) {
 // ---------------------------------------------------------------------------
 
 export async function addClientAction(input: { name: string; logo: string }) {
-  await cms.addClient(input);
+  const created = await cms.addClient(input);
   revalidateForPage("corporate-event");
+  return created;
 }
 
 export async function updateClientAction(id: string, patch: Partial<cms.Client>) {
@@ -132,9 +135,10 @@ export async function reorderClientsAction(orderedIds: string[]) {
 // ---------------------------------------------------------------------------
 
 export async function addBlogPostAction(input: { title: string; excerpt: string; date_label: string }) {
-  await cms.addBlogPost(input);
+  const created = await cms.addBlogPost(input);
   revalidateForPage("blog");
   revalidateForPage("home");
+  return created;
 }
 
 export async function updateBlogPostAction(id: string, patch: Partial<cms.BlogPost>) {

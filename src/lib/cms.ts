@@ -238,8 +238,13 @@ export async function addGalleryImage(input: { page: string; src: string; alt: s
     .order("sort_order", { ascending: false })
     .limit(1);
   const nextOrder = ((existing?.[0] as { sort_order?: number } | undefined)?.sort_order ?? -1) + 1;
-  const { error } = await supabase.from("vision_media_gallery_images").insert({ ...input, sort_order: nextOrder });
+  const { data, error } = await supabase
+    .from("vision_media_gallery_images")
+    .insert({ ...input, sort_order: nextOrder })
+    .select()
+    .single();
   if (error) throw error;
+  return data as GalleryImage;
 }
 
 export async function updateGalleryImage(id: string, patch: Partial<GalleryImage>) {
@@ -287,8 +292,13 @@ export async function addTestimonial(input: { quote: string; author: string; rol
     .order("sort_order", { ascending: false })
     .limit(1);
   const nextOrder = ((existing?.[0] as { sort_order?: number } | undefined)?.sort_order ?? -1) + 1;
-  const { error } = await supabase.from("vision_media_testimonials").insert({ ...input, sort_order: nextOrder });
+  const { data, error } = await supabase
+    .from("vision_media_testimonials")
+    .insert({ ...input, sort_order: nextOrder })
+    .select()
+    .single();
   if (error) throw error;
+  return data as Testimonial;
 }
 
 export async function updateTestimonial(id: string, patch: Partial<Testimonial>) {
@@ -335,8 +345,13 @@ export async function addClient(input: { name: string; logo: string }) {
     .order("sort_order", { ascending: false })
     .limit(1);
   const nextOrder = ((existing?.[0] as { sort_order?: number } | undefined)?.sort_order ?? -1) + 1;
-  const { error } = await supabase.from("vision_media_clients").insert({ ...input, sort_order: nextOrder });
+  const { data, error } = await supabase
+    .from("vision_media_clients")
+    .insert({ ...input, sort_order: nextOrder })
+    .select()
+    .single();
   if (error) throw error;
+  return data as Client;
 }
 
 export async function updateClient(id: string, patch: Partial<Client>) {
@@ -383,8 +398,13 @@ export async function addBlogPost(input: { title: string; excerpt: string; date_
     .order("sort_order", { ascending: false })
     .limit(1);
   const nextOrder = ((existing?.[0] as { sort_order?: number } | undefined)?.sort_order ?? -1) + 1;
-  const { error } = await supabase.from("vision_media_blog_posts").insert({ ...input, sort_order: nextOrder });
+  const { data, error } = await supabase
+    .from("vision_media_blog_posts")
+    .insert({ ...input, sort_order: nextOrder })
+    .select()
+    .single();
   if (error) throw error;
+  return data as BlogPost;
 }
 
 export async function updateBlogPost(id: string, patch: Partial<BlogPost>) {

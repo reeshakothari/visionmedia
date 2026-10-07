@@ -25,6 +25,7 @@ export default async function Home() {
       <AboutSection aboutSection={aboutSection} />
       <Gallery
         id="gallery"
+        page="home"
         heading={gallerySection.heading}
         subheading={gallerySection.subheading}
         headingPath="gallerySection.heading"
