@@ -96,6 +96,10 @@ function EditableClientTile({
   async function handleReplace(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!window.confirm("Replace this logo?")) {
+      e.target.value = "";
+      return;
+    }
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setError(sizeError);
@@ -162,6 +166,10 @@ function EditableClientTile({
         placeholder="Company name"
         onBlur={async (e) => {
           if (e.target.value === client.name) return;
+          if (!window.confirm("Save this change?")) {
+            e.target.value = client.name;
+            return;
+          }
           await updateClientAction(client.id, { name: e.target.value });
           onChange({ name: e.target.value });
         }}
@@ -179,6 +187,10 @@ function AddClientTile({ onAdd }: { onAdd: (client: Client) => void }) {
   async function handleAdd(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!window.confirm("Add this new client?")) {
+      e.target.value = "";
+      return;
+    }
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setError(sizeError);

@@ -47,11 +47,30 @@ export function EditInput({
           key={current}
           defaultValue={current}
           rows={2}
-          onBlur={(e) => ctx.set(path, e.target.value)}
+          onBlur={(e) => {
+            if (e.target.value === current) return;
+            if (window.confirm("Save this change?")) {
+              ctx.set(path, e.target.value);
+            } else {
+              e.target.value = current;
+            }
+          }}
           className={className}
         />
       ) : (
-        <input key={current} defaultValue={current} onBlur={(e) => ctx.set(path, e.target.value)} className={className} />
+        <input
+          key={current}
+          defaultValue={current}
+          onBlur={(e) => {
+            if (e.target.value === current) return;
+            if (window.confirm("Save this change?")) {
+              ctx.set(path, e.target.value);
+            } else {
+              e.target.value = current;
+            }
+          }}
+          className={className}
+        />
       )}
     </label>
   );

@@ -54,6 +54,7 @@ export function ListManager<T extends Item>({
   }
 
   async function handleAdd() {
+    if (!window.confirm("Add this new item?")) return;
     setAdding(true);
     try {
       const created = await createAction(draft);
@@ -145,6 +146,7 @@ export function ListManager<T extends Item>({
                         uploading={uploadingField === `${item.id}-${f.name}`}
                         error={uploadErrors[`${item.id}-${f.name}`]}
                         onFile={(file) => {
+                          if (!window.confirm("Replace this image?")) return;
                           handleUpload(`${item.id}-${f.name}`, file, (url) => handleUpdate(item.id, f.name, url));
                         }}
                       />
@@ -152,13 +154,29 @@ export function ListManager<T extends Item>({
                       <textarea
                         defaultValue={String(item[f.name] ?? "")}
                         rows={2}
-                        onBlur={(e) => handleUpdate(item.id, f.name, e.target.value)}
+                        onBlur={(e) => {
+                          const original = String(item[f.name] ?? "");
+                          if (e.target.value === original) return;
+                          if (window.confirm("Save this change?")) {
+                            handleUpdate(item.id, f.name, e.target.value);
+                          } else {
+                            e.target.value = original;
+                          }
+                        }}
                         className="w-full rounded-lg border border-navy/15 px-2.5 py-1.5 text-sm outline-none focus:border-gold"
                       />
                     ) : (
                       <input
                         defaultValue={String(item[f.name] ?? "")}
-                        onBlur={(e) => handleUpdate(item.id, f.name, e.target.value)}
+                        onBlur={(e) => {
+                          const original = String(item[f.name] ?? "");
+                          if (e.target.value === original) return;
+                          if (window.confirm("Save this change?")) {
+                            handleUpdate(item.id, f.name, e.target.value);
+                          } else {
+                            e.target.value = original;
+                          }
+                        }}
                         className="w-full rounded-lg border border-navy/15 px-2.5 py-1.5 text-sm outline-none focus:border-gold"
                       />
                     )}

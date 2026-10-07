@@ -31,7 +31,12 @@ export function Field({ path, value, as = "span", className }: FieldProps) {
     "data-editable-path": path,
     onBlur: (e: React.FocusEvent<HTMLElement>) => {
       const text = e.currentTarget.textContent ?? "";
-      if (text !== current) ctx.set(path, text);
+      if (text === current) return;
+      if (window.confirm("Save this change?")) {
+        ctx.set(path, text);
+      } else {
+        e.currentTarget.textContent = current;
+      }
     },
     key: path,
   }, current);

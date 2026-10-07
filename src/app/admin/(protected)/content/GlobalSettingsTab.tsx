@@ -15,7 +15,14 @@ function TextField({ path, label, defaultValue }: { path: string; label: string;
       <input
         key={current}
         defaultValue={current}
-        onBlur={(e) => ctx.set(path, e.target.value)}
+        onBlur={(e) => {
+          if (e.target.value === current) return;
+          if (window.confirm("Save this change?")) {
+            ctx.set(path, e.target.value);
+          } else {
+            e.target.value = current;
+          }
+        }}
         className="w-full rounded-lg border border-navy/15 px-3 py-2 text-sm outline-none focus:border-gold"
       />
     </div>
@@ -30,6 +37,7 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
   const logo = (ctx.get("siteInfo.logo") as string) ?? global.siteInfo.logo;
 
   async function handleLogoUpload(file: File) {
+    if (!window.confirm("Replace the logo?")) return;
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setUploadError(sizeError);

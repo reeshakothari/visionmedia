@@ -128,6 +128,10 @@ function EditableGalleryTile({
   async function handleReplace(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!window.confirm("Replace this image?")) {
+      e.target.value = "";
+      return;
+    }
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setError(sizeError);
@@ -193,6 +197,10 @@ function EditableGalleryTile({
           placeholder="Title"
           onBlur={async (e) => {
             if (e.target.value === item.title) return;
+            if (!window.confirm("Save this change?")) {
+              e.target.value = item.title;
+              return;
+            }
             await updateGalleryImageAction(item.id, page, { title: e.target.value });
             onChange({ title: e.target.value });
           }}
@@ -204,6 +212,10 @@ function EditableGalleryTile({
           placeholder="Caption"
           onBlur={async (e) => {
             if (e.target.value === item.caption) return;
+            if (!window.confirm("Save this change?")) {
+              e.target.value = item.caption;
+              return;
+            }
             await updateGalleryImageAction(item.id, page, { caption: e.target.value });
             onChange({ caption: e.target.value });
           }}
@@ -222,6 +234,10 @@ function AddGalleryTile({ page, onAdd }: { page: string; onAdd: (item: GalleryIm
   async function handleAdd(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!window.confirm("Add this new photo?")) {
+      e.target.value = "";
+      return;
+    }
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setError(sizeError);

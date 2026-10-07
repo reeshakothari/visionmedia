@@ -41,6 +41,10 @@ export function EditableImage({ path, src, alt, className, fill, sizes, priority
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file || !ctx) return;
+    if (!window.confirm("Replace this image?")) {
+      if (inputRef.current) inputRef.current.value = "";
+      return;
+    }
     const sizeError = checkUploadSize(file);
     if (sizeError) {
       setError(sizeError);

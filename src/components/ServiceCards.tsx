@@ -77,7 +77,15 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
               <input
                 key={(ctx.get(`${base}.href`) as string | undefined) ?? card.href}
                 defaultValue={(ctx.get(`${base}.href`) as string | undefined) ?? card.href}
-                onBlur={(e) => ctx.set(`${base}.href`, e.target.value)}
+                onBlur={(e) => {
+                  const current = (ctx.get(`${base}.href`) as string | undefined) ?? card.href;
+                  if (e.target.value === current) return;
+                  if (window.confirm("Save this change?")) {
+                    ctx.set(`${base}.href`, e.target.value);
+                  } else {
+                    e.target.value = current;
+                  }
+                }}
                 className="w-full rounded-lg border border-navy/15 px-2.5 py-1.5 text-xs outline-none focus:border-gold"
               />
             </label>
