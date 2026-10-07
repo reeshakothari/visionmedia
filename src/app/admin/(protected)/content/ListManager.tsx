@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
 import { uploadImageAction } from "@/lib/actions";
@@ -31,11 +32,26 @@ export function ListManager<T extends Item>({
   deleteAction: (id: string) => Promise<void>;
   reorderAction: (orderedIds: string[]) => Promise<void>;
 }) {
+  const router = useRouter();
   const [items, setItems] = useState<T[]>(initialItems);
   const [draft, setDraft] = useState<Record<string, string>>(emptyDefaults);
   const [adding, setAdding] = useState(false);
   const [uploadingField, setUploadingField] = useState<string | null>(null);
   const [uploadErrors, setUploadErrors] = useState<Record<string, string>>({});
+  const [justPublished, setJustPublished] = useState(false);
+  const [justSaved, setJustSaved] = useState(false);
+
+  function handleSave() {
+    (document.activeElement as HTMLElement | null)?.blur();
+    setJustSaved(true);
+    setTimeout(() => setJustSaved(false), 2000);
+  }
+
+  function handlePublish() {
+    router.refresh();
+    setJustPublished(true);
+    setTimeout(() => setJustPublished(false), 2500);
+  }
 
   async function handleAdd() {
     setAdding(true);
@@ -91,11 +107,31 @@ export function ListManager<T extends Item>({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 md:py-10">
-      <h1 className="font-display text-2xl text-navy sm:text-3xl">{title}</h1>
-      {description && <p className="mt-1 text-sm text-muted-light">{description}</p>}
+    <div>
+      <div className="sticky top-[41px] z-20 flex flex-wrap items-center justify-between gap-3 border-b border-gold/30 bg-cream-alt/95 px-4 py-2.5 backdrop-blur">
+        <p className="text-xs text-navy/70">
+          Editing <span className="font-semibold text-navy">{title}</span> — changes save and go live immediately, no separate
+          publish step needed.
+        </p>
+        <div className="flex items-center gap-3">
+          <span className="text-xs font-medium text-navy/50">{justPublished ? "Published ✓" : justSaved ? "Saved ✓" : "Live"}</span>
+          <button
+            onClick={handleSave}
+            className="tap-target rounded-full border border-navy/20 px-4 py-1.5 text-xs font-semibold text-navy transition-colors hover:bg-navy/5"
+          >
+            Save
+          </button>
+          <button onClick={handlePublish} className="btn-gold tap-target rounded-full px-5 py-1.5 text-xs font-semibold uppercase">
+            Publish
+          </button>
+        </div>
+      </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 md:py-10">
+        <h1 className="font-display text-2xl text-navy sm:text-3xl">{title}</h1>
+        {description && <p className="mt-1 text-sm text-muted-light">{description}</p>}
+
+        <div className="mt-6 space-y-4">
         {items.map((item, i) => (
           <div key={item.id} className="hairline rounded-2xl bg-white p-5 shadow-sm">
             <div className="flex items-start gap-4">
@@ -203,6 +239,7 @@ export function ListManager<T extends Item>({
         >
           <Plus className="h-4 w-4" /> {adding ? "Adding…" : "Add"}
         </button>
+      </div>
       </div>
     </div>
   );
