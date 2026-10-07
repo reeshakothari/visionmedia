@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
 import { useEditable } from "@/components/editable/context";
@@ -146,6 +146,14 @@ function EditableClientTile({
         <span className="absolute inset-0 flex items-center justify-center bg-white/0 text-[10px] font-semibold text-navy opacity-0 transition group-hover/edit:bg-white/85 group-hover/edit:opacity-100">
           {uploading ? "Uploading…" : "Change logo"}
         </span>
+        {!uploading && (
+          <span
+            className="pointer-events-none absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-navy opacity-90 shadow transition-opacity duration-200 group-hover/edit:opacity-0"
+            aria-hidden="true"
+          >
+            <Pencil className="h-2.5 w-2.5" />
+          </span>
+        )}
         <input type="file" accept="image/*" className="hidden" onChange={handleReplace} disabled={uploading} />
       </label>
       <input

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import FadeImage from "@/components/FadeImage";
 import Reveal from "@/components/Reveal";
 import { Field } from "@/components/editable/Field";
@@ -169,6 +169,14 @@ function EditableGalleryTile({
           </span>
           <input type="file" accept="image/*" className="hidden" onChange={handleReplace} disabled={uploading} />
         </label>
+        {!uploading && (
+          <span
+            className="pointer-events-none absolute left-1.5 top-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-navy opacity-90 shadow transition-opacity duration-200 group-hover/edit:opacity-0"
+            aria-hidden="true"
+          >
+            <Pencil className="h-3 w-3" />
+          </span>
+        )}
         <button
           type="button"
           onClick={handleDelete}
