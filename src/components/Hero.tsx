@@ -1,11 +1,12 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import type { HomeContent } from "@/lib/cms";
 import { Field } from "@/components/editable/Field";
 import { EditableImage } from "@/components/editable/EditableImage";
 import { EditPanel, EditInput } from "@/components/editable/EditPanel";
+import { Lightbox } from "@/components/Lightbox";
 import { useEditable } from "@/components/editable/context";
 
 const ORIENTATION_ASPECT: Record<"landscape" | "portrait", string> = {
@@ -24,6 +25,7 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const currentOrientation =
     (ctx?.get("hero.imagesOrientation") as "landscape" | "portrait" | undefined) ?? hero.imagesOrientation;
   const aspectClass = ORIENTATION_ASPECT[currentOrientation];
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
     <section id="home" ref={ref} className="bg-noise relative overflow-hidden bg-navy px-4 pb-16 pt-12 sm:px-6 md:pb-28 md:pt-20">
@@ -94,7 +96,21 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className={`group hairline-light relative ${aspectClass} overflow-hidden rounded-xl shadow-premium-lg`}
+                onClick={!ctx ? () => setLightboxIndex(i) : undefined}
+                role={!ctx ? "button" : undefined}
+                tabIndex={!ctx ? 0 : undefined}
+                aria-label={!ctx ? `View ${img.title} full size` : undefined}
+                onKeyDown={
+                  !ctx
+                    ? (e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setLightboxIndex(i);
+                        }
+                      }
+                    : undefined
+                }
+                className={`group hairline-light relative ${aspectClass} overflow-hidden rounded-xl shadow-premium-lg ${!ctx ? "cursor-zoom-in" : ""}`}
               >
                 <EditableImage
                   path={`hero.images.${i}.src`}
@@ -119,6 +135,15 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
         <EditInput path="hero.primaryCta.href" label="Primary button link" value={hero.primaryCta.href} />
         <EditInput path="hero.secondaryCta.href" label="Secondary button link" value={hero.secondaryCta.href} />
       </EditPanel>
+
+      {!ctx && (
+        <Lightbox
+          images={hero.images.map((img) => ({ src: img.src, alt: img.alt, title: img.title }))}
+          openIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { Lightbox } from "@/components/Lightbox";
 import { Field } from "@/components/editable/Field";
 import { useEditable } from "@/components/editable/context";
 import { uploadImageAction, addClientAction, updateClientAction, deleteClientAction } from "@/lib/actions";
@@ -21,6 +22,8 @@ export default function ClientsSection({
 }) {
   const ctx = useEditable();
   const [clients, setClients] = useState(initialClients);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const logoClients = clients.filter((c) => c.logo);
 
   // On the public site, hide the whole section until at least one client
   // logo has been added — an empty "Our Clients" block would look broken.
@@ -59,15 +62,20 @@ export default function ClientsSection({
               ) : (
                 <Reveal key={client.id} delay={(i % 10) * 60}>
                   <div className="hairline shadow-premium flex h-32 flex-col items-center justify-center gap-3 rounded-2xl bg-white p-4 transition-transform duration-500 ease-out hover:-translate-y-1.5">
-                    <div className="relative h-12 w-full">
-                      {client.logo ? (
+                    {client.logo ? (
+                      <button
+                        type="button"
+                        onClick={() => setLightboxIndex(logoClients.findIndex((c) => c.id === client.id))}
+                        aria-label={`View ${client.name} logo full size`}
+                        className="relative h-12 w-full cursor-zoom-in"
+                      >
                         <Image src={client.logo} alt={client.name} fill className="object-contain" sizes="180px" />
-                      ) : (
-                        <div className="flex h-full items-center justify-center font-display text-lg text-navy/40">
-                          {client.name.slice(0, 1)}
-                        </div>
-                      )}
-                    </div>
+                      </button>
+                    ) : (
+                      <div className="relative flex h-12 w-full items-center justify-center font-display text-lg text-navy/40">
+                        {client.name.slice(0, 1)}
+                      </div>
+                    )}
                     <p className="text-center text-xs font-medium text-navy/70">{client.name}</p>
                   </div>
                 </Reveal>
@@ -77,6 +85,15 @@ export default function ClientsSection({
           </div>
         )}
       </div>
+
+      {!ctx && (
+        <Lightbox
+          images={logoClients.map((c) => ({ src: c.logo, alt: c.name, title: c.name }))}
+          openIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </section>
   );
 }

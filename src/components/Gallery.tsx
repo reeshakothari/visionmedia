@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import FadeImage from "@/components/FadeImage";
 import Reveal from "@/components/Reveal";
+import { Lightbox } from "@/components/Lightbox";
 import { Field } from "@/components/editable/Field";
 import { EditPanel, EditInput } from "@/components/editable/EditPanel";
 import { useEditable } from "@/components/editable/context";
@@ -47,6 +48,7 @@ export default function Gallery({
   const currentOrientation = (ctx?.get(orientationPath) as "landscape" | "portrait" | undefined) ?? orientation;
   const aspectClass = ORIENTATION_ASPECT[currentOrientation];
   const [items, setItems] = useState(initialItems);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
     <section id={id} className="bg-white px-4 py-20 sm:px-6 md:py-28">
@@ -100,7 +102,12 @@ export default function Gallery({
               />
             ) : (
               <Reveal key={item.id} delay={(i % 8) * 60}>
-                <div className={`group relative ${aspectClass} overflow-hidden rounded-xl bg-cream-alt shadow-sm transition-shadow duration-500 hover:shadow-premium`}>
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(i)}
+                  aria-label={`View ${item.title || item.alt} full size`}
+                  className={`group relative block w-full ${aspectClass} cursor-zoom-in overflow-hidden rounded-xl bg-cream-alt text-left shadow-sm transition-shadow duration-500 hover:shadow-premium`}
+                >
                   <FadeImage
                     src={item.src}
                     alt={item.alt || item.title}
@@ -114,7 +121,7 @@ export default function Gallery({
                     <h3 className="font-heading text-xs font-semibold text-white sm:text-sm">{item.title}</h3>
                     <p className="hidden text-xs text-white/70 sm:block">{item.caption}</p>
                   </div>
-                </div>
+                </button>
               </Reveal>
             )
           )}
@@ -146,6 +153,15 @@ export default function Gallery({
           </EditPanel>
         )}
       </div>
+
+      {!ctx && (
+        <Lightbox
+          images={items.map((item) => ({ src: item.src, alt: item.alt || item.title, title: item.title, caption: item.caption }))}
+          openIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </section>
   );
 }
