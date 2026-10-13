@@ -102,7 +102,7 @@ export const servicesSection = {
   tapHint: "Tap to explore →",
   // All 4 card photos share one shape — set this to match whichever
   // orientation the uploaded photos actually are.
-  cardsOrientation: "portrait" as "landscape" | "portrait",
+  cardsOrientation: "landscape" as "landscape" | "portrait",
 };
 
 export const serviceCards = [
