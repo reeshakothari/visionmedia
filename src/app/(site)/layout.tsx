@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FloatingContactButtons from "@/components/FloatingContactButtons";
 import { getContent } from "@/lib/cms";
 import type {
   BlogContent,
@@ -50,6 +51,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
         footerByPath={footerByPath}
         headerFooter={global.headerFooter}
       />
+      <FloatingContactButtons whatsapp={global.socialLinks.whatsapp} instagram={global.socialLinks.instagram} />
     </>
   );
 }

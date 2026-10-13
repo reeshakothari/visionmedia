@@ -42,6 +42,7 @@ export const socialLinks = {
   linkedin:
     "https://www.linkedin.com/in/vision-mediaandentertainment-982b00136?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
   call: "tel:+919028949398",
+  whatsapp: "https://wa.me/919028949398",
 };
 
 export const formAction = "https://formsubmit.co/riteshjain027@gmail.com";

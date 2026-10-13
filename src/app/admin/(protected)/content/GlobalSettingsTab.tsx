@@ -98,6 +98,11 @@ export default function GlobalSettingsTab({ global }: { global: GlobalContent })
           <TextField path="socialLinks.instagram" label="Instagram URL" defaultValue={global.socialLinks.instagram} />
           <TextField path="socialLinks.linkedin" label="LinkedIn URL" defaultValue={global.socialLinks.linkedin} />
           <TextField path="socialLinks.call" label="Call link (tel:...)" defaultValue={global.socialLinks.call} />
+          <TextField
+            path="socialLinks.whatsapp"
+            label="WhatsApp number or link"
+            defaultValue={global.socialLinks.whatsapp}
+          />
         </div>
       </div>
 
