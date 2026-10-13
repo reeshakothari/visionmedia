@@ -12,7 +12,22 @@ import type { HomeContent } from "@/lib/cms";
 
 type ServiceCard = HomeContent["serviceCards"][number];
 
-function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: number; tapHint: string }) {
+const ORIENTATION_HEIGHT: Record<"landscape" | "portrait", string> = {
+  landscape: "h-[300px] sm:h-[320px] lg:h-[360px]",
+  portrait: "h-[430px] sm:h-[460px] lg:h-[520px]",
+};
+
+function ServiceCard({
+  card,
+  index,
+  tapHint,
+  orientation,
+}: {
+  card: ServiceCard;
+  index: number;
+  tapHint: string;
+  orientation: "landscape" | "portrait";
+}) {
   const ctx = useEditable();
   const isFirst = index === 0;
   const [flipped, setFlipped] = useState(false);
@@ -102,7 +117,7 @@ function ServiceCard({ card, index, tapHint }: { card: ServiceCard; index: numbe
         tabIndex={0}
         aria-pressed={flipped}
         aria-label={`${card.frontTitle} — press to see details`}
-        className="group relative h-[430px] cursor-pointer [perspective:1400px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-dark focus-visible:ring-offset-2 sm:h-[460px] lg:h-[520px]"
+        className={`group relative ${ORIENTATION_HEIGHT[orientation]} cursor-pointer [perspective:1400px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold-dark focus-visible:ring-offset-2`}
         onClick={() => setFlipped((v) => !v)}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
@@ -186,6 +201,11 @@ export default function ServiceCards({
   servicesSection: HomeContent["servicesSection"];
   serviceCards: HomeContent["serviceCards"];
 }) {
+  const ctx = useEditable();
+  const orientation =
+    (ctx?.get("servicesSection.cardsOrientation") as "landscape" | "portrait" | undefined) ??
+    servicesSection.cardsOrientation;
+
   return (
     <section id="services" className="bg-white px-4 py-20 sm:px-6 md:py-28">
       <div className="mx-auto max-w-6xl">
@@ -201,9 +221,33 @@ export default function ServiceCards({
           </div>
         </Reveal>
 
+        {ctx && (
+          <div className="mx-auto mb-6 flex max-w-2xl flex-wrap items-center justify-center gap-3 rounded-full border border-dashed border-gold/40 bg-gold/5 px-4 py-2 text-xs">
+            <span className="font-semibold text-navy">Photo shape for these 4 cards:</span>
+            {(["landscape", "portrait"] as const).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  if (orientation === opt) return;
+                  if (window.confirm(`Switch these 4 cards to ${opt} photos?`)) ctx.set("servicesSection.cardsOrientation", opt);
+                }}
+                className={`rounded-full px-3 py-1 font-semibold capitalize transition-colors ${
+                  orientation === opt ? "bg-navy text-white" : "hairline bg-white text-navy/60 hover:bg-navy/5"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+            <span className="w-full text-center text-[11px] font-normal text-muted-light">
+              Upload all 4 card photos in the same orientation for the cleanest look.
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {serviceCards.map((card, i) => (
-            <ServiceCard key={i} card={card} index={i} tapHint={servicesSection.tapHint} />
+            <ServiceCard key={i} card={card} index={i} tapHint={servicesSection.tapHint} orientation={orientation} />
           ))}
         </div>
 
