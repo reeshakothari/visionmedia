@@ -8,6 +8,11 @@ import { EditableImage } from "@/components/editable/EditableImage";
 import { EditPanel, EditInput } from "@/components/editable/EditPanel";
 import { useEditable } from "@/components/editable/context";
 
+const ORIENTATION_ASPECT: Record<"landscape" | "portrait", string> = {
+  landscape: "aspect-[4/3]",
+  portrait: "aspect-[3/4]",
+};
+
 export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -16,6 +21,9 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
   const ctx = useEditable();
   const primaryHref = (ctx?.get("hero.primaryCta.href") as string | undefined) ?? hero.primaryCta.href;
   const secondaryHref = (ctx?.get("hero.secondaryCta.href") as string | undefined) ?? hero.secondaryCta.href;
+  const currentOrientation =
+    (ctx?.get("hero.imagesOrientation") as "landscape" | "portrait" | undefined) ?? hero.imagesOrientation;
+  const aspectClass = ORIENTATION_ASPECT[currentOrientation];
 
   return (
     <section id="home" ref={ref} className="bg-noise relative overflow-hidden bg-navy px-4 pb-16 pt-12 sm:px-6 md:pb-28 md:pt-20">
@@ -59,6 +67,26 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
         </motion.div>
 
         <motion.div style={{ y, opacity }} className="order-2 mt-8 md:mt-0">
+          {ctx && (
+            <div className="mb-3 flex flex-wrap items-center justify-center gap-2 rounded-full border border-dashed border-gold/40 bg-gold/5 px-3 py-1.5 text-[11px]">
+              <span className="font-semibold text-white/90">Photo shape:</span>
+              {(["landscape", "portrait"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => {
+                    if (currentOrientation === opt) return;
+                    if (window.confirm(`Switch these 4 photos to ${opt}?`)) ctx.set("hero.imagesOrientation", opt);
+                  }}
+                  className={`rounded-full px-2.5 py-0.5 font-semibold capitalize transition-colors ${
+                    currentOrientation === opt ? "bg-gold text-navy" : "bg-white/10 text-white/70 hover:bg-white/20"
+                  }`}
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          )}
           <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
             {hero.images.map((img, i) => (
               <motion.div
@@ -66,7 +94,7 @@ export default function Hero({ hero }: { hero: HomeContent["hero"] }) {
                 initial={{ opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.8, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                className="group hairline-light relative aspect-square overflow-hidden rounded-xl shadow-premium-lg"
+                className={`group hairline-light relative ${aspectClass} overflow-hidden rounded-xl shadow-premium-lg`}
               >
                 <EditableImage
                   path={`hero.images.${i}.src`}

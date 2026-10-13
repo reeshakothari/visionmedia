@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import FadeImage from "@/components/FadeImage";
 import Reveal from "@/components/Reveal";
@@ -12,6 +11,11 @@ import { uploadImageAction, addGalleryImageAction, updateGalleryImageAction, del
 import { checkUploadSize } from "@/lib/upload";
 import type { GalleryImage } from "@/lib/cms";
 
+const ORIENTATION_ASPECT: Record<"landscape" | "portrait", string> = {
+  landscape: "aspect-[4/3]",
+  portrait: "aspect-[3/4]",
+};
+
 export default function Gallery({
   id,
   page,
@@ -19,6 +23,8 @@ export default function Gallery({
   subheading,
   headingPath = "galleryHeading",
   subheadingPath = "gallerySubheading",
+  orientation = "landscape",
+  orientationPath = "galleryOrientation",
   items: initialItems,
   cta,
 }: {
@@ -29,11 +35,17 @@ export default function Gallery({
   subheading: string;
   headingPath?: string;
   subheadingPath?: string;
+  /** Every photo in this gallery is shown in the same shape — set to match
+   * whichever orientation the uploaded photos actually are. */
+  orientation?: "landscape" | "portrait";
+  orientationPath?: string;
   items: GalleryImage[];
   cta?: { text: string; label: string; href: string };
 }) {
   const ctx = useEditable();
   const ctaHref = cta ? ((ctx?.get("gallerySection.ctaHref") as string | undefined) ?? cta.href) : undefined;
+  const currentOrientation = (ctx?.get(orientationPath) as "landscape" | "portrait" | undefined) ?? orientation;
+  const aspectClass = ORIENTATION_ASPECT[currentOrientation];
   const [items, setItems] = useState(initialItems);
 
   return (
@@ -51,6 +63,30 @@ export default function Gallery({
           </div>
         </Reveal>
 
+        {ctx && (
+          <div className="mx-auto mb-8 flex max-w-2xl flex-wrap items-center justify-center gap-3 rounded-full border border-dashed border-gold/40 bg-gold/5 px-4 py-2 text-xs">
+            <span className="font-semibold text-navy">Photo shape for this gallery:</span>
+            {(["landscape", "portrait"] as const).map((opt) => (
+              <button
+                key={opt}
+                type="button"
+                onClick={() => {
+                  if (currentOrientation === opt) return;
+                  if (window.confirm(`Switch this gallery to ${opt} photos?`)) ctx.set(orientationPath, opt);
+                }}
+                className={`rounded-full px-3 py-1 font-semibold capitalize transition-colors ${
+                  currentOrientation === opt ? "bg-navy text-white" : "hairline bg-white text-navy/60 hover:bg-navy/5"
+                }`}
+              >
+                {opt}
+              </button>
+            ))}
+            <span className="w-full text-center text-[11px] font-normal text-muted-light">
+              Upload all photos in this gallery in the same orientation for the cleanest look.
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {items.map((item, i) =>
             ctx ? (
@@ -58,26 +94,19 @@ export default function Gallery({
                 key={item.id}
                 item={item}
                 page={page}
+                aspectClass={aspectClass}
                 onChange={(patch) => setItems((prev) => prev.map((it) => (it.id === item.id ? { ...it, ...patch } : it)))}
                 onDelete={() => setItems((prev) => prev.filter((it) => it.id !== item.id))}
               />
             ) : (
               <Reveal key={item.id} delay={(i % 8) * 60}>
-                <div className="group relative aspect-square overflow-hidden rounded-xl bg-cream-alt shadow-sm transition-shadow duration-500 hover:shadow-premium">
-                  <Image
-                    src={item.src}
-                    alt=""
-                    aria-hidden="true"
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-                    className="scale-110 object-cover opacity-60 blur-2xl"
-                  />
+                <div className={`group relative ${aspectClass} overflow-hidden rounded-xl bg-cream-alt shadow-sm transition-shadow duration-500 hover:shadow-premium`}>
                   <FadeImage
                     src={item.src}
                     alt={item.alt || item.title}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-                    className="object-contain transition duration-700 ease-out group-hover:scale-110"
+                    className="object-cover transition duration-700 ease-out group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 sm:p-4">
@@ -92,6 +121,7 @@ export default function Gallery({
           {ctx && (
             <AddGalleryTile
               page={page}
+              aspectClass={aspectClass}
               onAdd={(created) => setItems((prev) => [...prev, created])}
             />
           )}
@@ -123,11 +153,13 @@ export default function Gallery({
 function EditableGalleryTile({
   item,
   page,
+  aspectClass,
   onChange,
   onDelete,
 }: {
   item: GalleryImage;
   page: string;
+  aspectClass: string;
   onChange: (patch: Partial<GalleryImage>) => void;
   onDelete: () => void;
 }) {
@@ -174,16 +206,8 @@ function EditableGalleryTile({
 
   return (
     <div className="hairline overflow-hidden rounded-xl bg-white shadow-sm">
-      <div className="group/edit relative aspect-square">
-        <Image
-          src={item.src}
-          alt=""
-          aria-hidden="true"
-          fill
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="scale-110 object-cover opacity-60 blur-2xl"
-        />
-        <FadeImage src={item.src} alt={item.alt || item.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" className="object-contain" />
+      <div className={`group/edit relative ${aspectClass}`}>
+        <FadeImage src={item.src} alt={item.alt || item.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" className="object-cover" />
         <label className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center gap-1 bg-black/0 opacity-0 transition group-hover/edit:bg-black/55 group-hover/edit:opacity-100">
           <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-navy shadow">
             {uploading ? "Uploading…" : "Change image"}
@@ -244,7 +268,7 @@ function EditableGalleryTile({
   );
 }
 
-function AddGalleryTile({ page, onAdd }: { page: string; onAdd: (item: GalleryImage) => void }) {
+function AddGalleryTile({ page, aspectClass, onAdd }: { page: string; aspectClass: string; onAdd: (item: GalleryImage) => void }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -282,7 +306,7 @@ function AddGalleryTile({ page, onAdd }: { page: string; onAdd: (item: GalleryIm
   }
 
   return (
-    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gold/40 bg-cream-alt/40 text-muted-light transition-colors hover:border-gold hover:bg-cream-alt">
+    <label className={`flex ${aspectClass} cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gold/40 bg-cream-alt/40 text-muted-light transition-colors hover:border-gold hover:bg-cream-alt`}>
       <Plus className="h-6 w-6" aria-hidden />
       <span className="px-2 text-center text-xs font-semibold">{uploading ? "Uploading…" : "Add Photo"}</span>
       {error && <span className="px-2 text-center text-[10px] text-red-600">{error}</span>}

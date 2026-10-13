@@ -34,7 +34,13 @@ export default async function WeddingVenuesPage() {
         features={venuesPage.whyFeatures}
         stats={venuesPage.stats}
       />
-      <Gallery page="wedding-venues" heading={venuesPage.galleryHeading} subheading={venuesPage.gallerySubheading} items={galleryItems} />
+      <Gallery
+        page="wedding-venues"
+        heading={venuesPage.galleryHeading}
+        subheading={venuesPage.gallerySubheading}
+        orientation={venuesPage.galleryOrientation}
+        items={galleryItems}
+      />
       <ContactSection
         basePath="contact"
         formType="wedding-venues"

@@ -30,6 +30,8 @@ export default async function Home() {
         subheading={gallerySection.subheading}
         headingPath="gallerySection.heading"
         subheadingPath="gallerySection.subheading"
+        orientation={gallerySection.orientation}
+        orientationPath="gallerySection.orientation"
         items={galleryItems}
         cta={{ text: gallerySection.ctaText, label: gallerySection.ctaLabel, href: gallerySection.ctaHref }}
       />

@@ -86,6 +86,9 @@ export const hero = {
     { src: "/images/furniture.png", alt: "Wedding Venues", title: "Wedding Venues" },
     { src: "/images/hospitality.jpg", alt: "Social Events", title: "Social Events" },
   ],
+  // All 4 tiles share one shape — set in the admin to match whichever
+  // orientation the uploaded photos actually are, landscape or portrait.
+  imagesOrientation: "landscape" as "landscape" | "portrait",
   titleLine1: "Vision",
   titleLine2: "Media & Entertainment",
   subtitle: "Premier event management and hospitality services for all your special occasions",
@@ -203,6 +206,9 @@ export const aboutSection = {
 export const gallerySection = {
   heading: "Our Work Gallery",
   subheading: "Explore our portfolio of successful events and memorable celebrations",
+  // Every photo in this gallery is shown in the same shape — set this to
+  // match whichever orientation the uploaded photos actually are.
+  orientation: "landscape" as "landscape" | "portrait",
   items: [
     { image: "/images/corporate.jpg", title: "Corporate Events", text: "Professional conferences and business gatherings" },
     { image: "/images/wedding.jpg", title: "Dream Weddings", text: "Luxury wedding celebrations" },
@@ -317,6 +323,7 @@ export const weddingPage = {
   ],
   galleryHeading: "Wedding Gallery",
   gallerySubheading: "Explore our portfolio of beautiful weddings and magical celebrations",
+  galleryOrientation: "landscape" as "landscape" | "portrait",
   gallery: [
     { image: "/images/wedding.jpg", title: "Wedding Ceremony", text: "Elegant ceremony setup" },
     { image: "/images/gallery/wa-0824-05pm-1.jpeg", title: "Wedding Reception", text: "Beautiful reception styling" },
@@ -407,6 +414,7 @@ export const corporatePage = {
   clientsSubheading: "Trusted by leading brands and organizations across industries",
   galleryHeading: "Corporate Event Gallery",
   gallerySubheading: "Explore our portfolio of successful corporate events and business celebrations",
+  galleryOrientation: "landscape" as "landscape" | "portrait",
   gallery: [
     { image: "/images/corporate.jpg", title: "Corporate Conference", text: "Professional event setup and management" },
     { image: "/images/gallery/cdp-8822.jpg", title: "Award Ceremony", text: "Elegant award presentation setup" },
@@ -491,6 +499,7 @@ export const venuesPage = {
   ],
   galleryHeading: "Venue Gallery",
   gallerySubheading: "Explore our collection of stunning wedding venues and exclusive locations",
+  galleryOrientation: "landscape" as "landscape" | "portrait",
   gallery: [
     { image: "/images/furniture.png", title: "Luxury Venue", text: "Elegant indoor setting" },
     { image: "/images/gallery/wa-0824-04pm.jpeg", title: "Garden Venue", text: "Beautiful outdoor setting" },
@@ -580,6 +589,7 @@ export const socialPage = {
   ],
   galleryHeading: "Social Events Gallery",
   gallerySubheading: "Explore our portfolio of memorable social celebrations and special occasions",
+  galleryOrientation: "landscape" as "landscape" | "portrait",
   gallery: [
     { image: "/images/hospitality.jpg", title: "Social Gathering", text: "Elegant event setup" },
     { image: "/images/gallery/wa-0824-38pm.jpeg", title: "Party Celebration", text: "Joyful celebration moments" },

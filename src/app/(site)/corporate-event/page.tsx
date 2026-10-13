@@ -37,7 +37,13 @@ export default async function CorporateEventPage() {
         stats={corporatePage.stats}
       />
       <ClientsSection heading={corporatePage.clientsHeading} subheading={corporatePage.clientsSubheading} clients={clients} />
-      <Gallery page="corporate-event" heading={corporatePage.galleryHeading} subheading={corporatePage.gallerySubheading} items={galleryItems} />
+      <Gallery
+        page="corporate-event"
+        heading={corporatePage.galleryHeading}
+        subheading={corporatePage.gallerySubheading}
+        orientation={corporatePage.galleryOrientation}
+        items={galleryItems}
+      />
       <ContactSection
         basePath="contact"
         formType="corporate-event"

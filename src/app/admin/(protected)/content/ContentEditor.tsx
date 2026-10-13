@@ -229,6 +229,8 @@ function PagePreview({
           subheading={c.gallerySection.subheading}
           headingPath="gallerySection.heading"
           subheadingPath="gallerySection.subheading"
+          orientation={c.gallerySection.orientation}
+          orientationPath="gallerySection.orientation"
           items={galleryImages}
           cta={{ text: c.gallerySection.ctaText, label: c.gallerySection.ctaLabel, href: c.gallerySection.ctaHref }}
         />
@@ -330,7 +332,13 @@ function PagePreview({
       {pageKey === "corporate-event" && "clientsHeading" in c && (
         <ClientsSection heading={c.clientsHeading} subheading={c.clientsSubheading} clients={clients} />
       )}
-      <Gallery page={pageKey} heading={c.galleryHeading} subheading={c.gallerySubheading} items={galleryImages} />
+      <Gallery
+        page={pageKey}
+        heading={c.galleryHeading}
+        subheading={c.gallerySubheading}
+        orientation={c.galleryOrientation}
+        items={galleryImages}
+      />
       <ContactSection
         basePath="contact"
         formType={pageKey}
