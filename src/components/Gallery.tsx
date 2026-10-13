@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import FadeImage from "@/components/FadeImage";
 import Reveal from "@/components/Reveal";
@@ -63,12 +64,20 @@ export default function Gallery({
             ) : (
               <Reveal key={item.id} delay={(i % 8) * 60}>
                 <div className="group relative aspect-square overflow-hidden rounded-xl bg-cream-alt shadow-sm transition-shadow duration-500 hover:shadow-premium">
+                  <Image
+                    src={item.src}
+                    alt=""
+                    aria-hidden="true"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                    className="scale-110 object-cover opacity-60 blur-2xl"
+                  />
                   <FadeImage
                     src={item.src}
                     alt={item.alt || item.title}
                     fill
                     sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-                    className="object-cover transition duration-700 ease-out group-hover:scale-110"
+                    className="object-contain transition duration-700 ease-out group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                   <div className="absolute inset-x-0 bottom-0 translate-y-2 p-3 opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100 sm:p-4">
@@ -166,7 +175,15 @@ function EditableGalleryTile({
   return (
     <div className="hairline overflow-hidden rounded-xl bg-white shadow-sm">
       <div className="group/edit relative aspect-square">
-        <FadeImage src={item.src} alt={item.alt || item.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" className="object-cover" />
+        <Image
+          src={item.src}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          className="scale-110 object-cover opacity-60 blur-2xl"
+        />
+        <FadeImage src={item.src} alt={item.alt || item.title} fill sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw" className="object-contain" />
         <label className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center gap-1 bg-black/0 opacity-0 transition group-hover/edit:bg-black/55 group-hover/edit:opacity-100">
           <span className="rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-navy shadow">
             {uploading ? "Uploading…" : "Change image"}

@@ -19,6 +19,33 @@ type EditableImageProps = {
   height?: number;
 };
 
+// A softly blurred, zoomed copy of the image filling the box behind the
+// real image, which sits on top at full size via object-contain. Used
+// whenever `fill` is set so an uploaded photo of any aspect ratio — a
+// client's event photo is rarely the exact shape of the slot it goes into —
+// is always shown in full, never cropped or stretched to fit a shape it
+// wasn't taken in.
+function BlurredFit({
+  src,
+  alt,
+  sizes,
+  priority,
+  className,
+}: {
+  src: string;
+  alt: string;
+  sizes?: string;
+  priority?: boolean;
+  className?: string;
+}) {
+  return (
+    <>
+      <Image src={src} alt="" aria-hidden="true" fill sizes={sizes} className="scale-110 object-cover opacity-60 blur-2xl" />
+      <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className={`object-contain ${className ?? ""}`} />
+    </>
+  );
+}
+
 // Wraps next/image. On the public site (no editor context) it renders
 // exactly like a plain <Image>. Inside the admin editor it adds a
 // hover-to-reveal "Change image" control that uploads a new file to Supabase
@@ -31,6 +58,9 @@ export function EditableImage({ path, src, alt, className, fill, sizes, priority
   const [justPublished, setJustPublished] = useState(false);
 
   if (!ctx) {
+    if (fill) {
+      return <BlurredFit src={src} alt={alt} sizes={sizes} priority={priority} className={className} />;
+    }
     return (
       <Image src={src} alt={alt} className={className} fill={fill} sizes={sizes} priority={priority} width={width} height={height} />
     );
@@ -81,16 +111,11 @@ export function EditableImage({ path, src, alt, className, fill, sizes, priority
 
   return (
     <span className={wrapperClass}>
-      <Image
-        src={currentSrc}
-        alt={alt}
-        className={fill ? `object-cover ${className ?? ""}` : className}
-        fill={fill}
-        sizes={sizes}
-        priority={priority}
-        width={fill ? undefined : (width ?? 200)}
-        height={fill ? undefined : (height ?? 200)}
-      />
+      {fill ? (
+        <BlurredFit src={currentSrc} alt={alt} sizes={sizes} priority={priority} className={className} />
+      ) : (
+        <Image src={currentSrc} alt={alt} className={className} width={width ?? 200} height={height ?? 200} />
+      )}
       <label
         className={`absolute inset-0 z-20 flex cursor-pointer flex-col items-center justify-center gap-1 bg-black/0 transition group-hover/edit:bg-black/55 group-hover/edit:opacity-100 ${
           justPublished ? "bg-emerald-900/60 opacity-100" : "opacity-0"
